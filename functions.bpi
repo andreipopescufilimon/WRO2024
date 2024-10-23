@@ -1,0 +1,1632 @@
+ '****************************************** Functii *******************************************
+
+'***********************************************************************************************
+'*********************************** Functii de conversie **************************************
+'***********************************************************************************************
+
+Sub check_battery
+  LCD.Clear()
+  LCD.Write(0, 70, EV3.BatteryLevel)
+  LCD.Update()
+EndSub
+
+Function cm2degree (in number cm, out number grade)
+  grade = cm * 360 / ( Math.Pi * @wheel_diameter )
+EndFunction
+ 
+Function degree2cm (in number grade, out number cm)
+  cm =  grade / ( 360 / ( Math.Pi * @wheel_diameter ) )
+EndFunction
+
+
+'***********************************************************************************************
+'********************************* Functii de line follower ************************************
+'***********************************************************************************************
+
+'******************************************************* line follower encoder function
+Function LF_2S_Encoder (in number Vmax, in number encoder_cm, in string acceleration, in string deceleration, in string end_brake)
+  
+  ' setam senzorii in modul Reflected Light si resetam contoarele motoarelor
+  Sensor.SetMode(@left_sensor,0)
+  Sensor.SetMode(@right_sensor,0)
+  Motor.ResetCount(@stop_string)
+  
+  ' setam variabilele cu care vom lucra
+  error_old = 0
+  exit_condition = 1 ' conditia de iesire din line follower. Trebuie sa inceapa mereu cu 1
+  
+  ' convertim cm in grade, motoarele nu stiu ce sunt cm :)
+  cm2degree(encoder_cm, encoder)
+  
+  While exit_condition = 1
+    'citiri senzori
+    s1 = Sensor.ReadPercent(@left_sensor) ' citire senzor stanga
+    s2 = Sensor.ReadPercent(@right_sensor) ' citire senzor dreapta
+    CurrentEncoder = ( Math.Abs(Motor.GetCount(@left_motor)) + Math.Abs(Motor.GetCount(@right_motor)) ) / 2 ' determinarea encoder-ului curent
+    
+    ' trebuie verificat cazul in care mergem cu spatele
+    ' la line follower nu ne punem aceste probleme pentru ca nu mergem cu spatele
+    If Vmax < 0 Then
+      sens = -1
+    Else
+      sens = 1
+    EndIf
+    
+    ' algoritm acceleratie
+    If acceleration = "on" Then
+      V = ( CurrentEncoder / @AcceleratedEncoder ) * ( Vmax - @V0 * sens ) + @V0 * sens
+      V = Math.Abs( V ) * sens 'corectie pentru a fi siguri ca nu dam cu spatele
+      
+      ' daca viteza calculata depaseste viteza maxima, vom folosi viteza maxima
+      If Math.Abs( V ) > Math.Abs( Vmax ) Then
+        V = Vmax
+      EndIf
+      
+    ElseIf acceleration = "off" Then
+      V = Vmax
+    EndIf
+    ' final algoritm acceleratie
+    
+    ' algoritm deceleratie
+    If deceleration = "on" Then
+      If encoder - CurrentEncoder < @DeceleratedEncoder Then 'we must get the last part of the encoder run
+        V = ( (encoder - CurrentEncoder) / @DeceleratedEncoder ) * ( Vmax - @V0 * sens ) + @V0 * sens
+        V = Math.Abs( V ) * sens 'corectie pentru a fi siguri ca nu dam cu spatele
+        
+        ' daca viteza calculata depaseste viteza minima, vom folosi viteza minima
+        If Math.Abs( V ) < Math.Abs( @V0 * sens ) Then
+          V = @V0 * sens
+        EndIf
+        
+      EndIf
+    EndIf
+    ' final algoritm deceleratie
+    
+    'in cazul in care avem nevoie de debugging
+    If @debug = "on" Then
+      LCD.Write(10,30, @V0*sens)
+      LCD.Write(50,30, V)
+      LCD.Update()
+    EndIf
+    
+    ' Controller PD pentru line follower
+    error = s1 - s2
+    P = @kp_lf * error
+    D = @kd_lf * (error - error_old)
+    
+    'in cazul in care avem nevoie de debugging
+    If @debug = "on" Then
+      LCD.Write(10,50, V)
+      LCD.Write(50,50, P + D)
+      LCD.Write(100,50, V + P + D)
+      LCD.Update()
+    EndIf
+    
+    ' calculele difera daca sunt motoare medii vs motoare mari
+    If @motor_type = "medium" Then
+      Motor_Left = -1 * ( V + (P + D) )
+    Else
+      Motor_Left =  V + (P + D)
+    EndIf
+    
+    Motor_Right = V - (P + D)
+    error_old = error
+    Motor.StartPower(@left_motor, Motor_Left)
+    Motor.StartPower(@right_motor, Motor_Right)
+    ' final controller PD pentru line follower
+    
+    'verificam conditia de iesire
+    If CurrentEncoder > encoder Then
+      exit_condition = 0
+    EndIf
+    
+  EndWhile
+  
+  ' aplicam frana la finalul algoritmului de line follower
+  If end_brake = "on" Then
+    Motor.Stop(@stop_string, "True")
+  EndIf
+  
+EndFunction
+'*******************************************************      end line follower encoder function
+
+
+'******************************************************* line follower intersection function
+Function LF_2S_Intersection (in number Vmax, in string acceleration, in string aliniere_centru_rotatie, in string end_brake)
+  
+  ' setam senzorii in modul Reflected Light si resetam contoarele motoarelor
+  Sensor.SetMode(@left_sensor,0)
+  Sensor.SetMode(@right_sensor,0)
+  Motor.ResetCount(@stop_string)
+  
+  ' setam variabilele cu care vom lucra
+  error_old = 0
+  exit_condition = 1 ' conditia de iesire din line follower. Trebuie sa inceapa mereu cu 1
+  
+  While exit_condition = 1
+    'citiri senzori
+    s1 = Sensor.ReadPercent(@left_sensor) ' citire senzor stanga
+    s2 = Sensor.ReadPercent(@right_sensor) ' citire senzor dreapta
+    CurrentEncoder = ( Math.Abs(Motor.GetCount(@left_motor)) + Math.Abs(Motor.GetCount(@right_motor)) ) / 2 ' determinarea encoder-ului curent
+    
+    ' algoritm acceleratie
+    If acceleration = "on" Then
+      V = ( CurrentEncoder / @AcceleratedEncoder ) * ( Vmax - @V0 ) + @V0
+      V = Math.Abs( V ) 'corectie pentru a fi siguri ca nu dam cu spatele
+      
+      ' daca viteza calculata depaseste viteza maxima, vom folosi viteza maxima
+      If V > Vmax Then
+        V = Vmax
+      EndIf
+      
+    ElseIf acceleration = "off" Then
+      V = Vmax
+    EndIf
+    ' final algoritm acceleratie
+    
+    ' Controller PD pentru line follower
+    error = s1 - s2
+    P = @kp_lf * error
+    D = @kd_lf * (error - error_old)
+    
+    ' calculele difera daca sunt motoare medii vs motoare mari
+    If @motor_type = "medium" Then
+      Motor_Left = -1 * ( V + (P + D) )
+    Else
+      Motor_Left =  V + (P + D)
+    EndIf
+    
+    Motor_Right = V - (P + D)
+    error_old = error
+    Motor.StartPower(@left_motor, Motor_Left)
+    Motor.StartPower(@right_motor, Motor_Right)
+    ' final controller PD pentru line follower
+    
+    'verificam conditia de iesire
+    If s1 < @black Or s2 < @black Then
+      exit_condition = 0
+    EndIf
+    
+  EndWhile
+  
+  'daca vrem aliniere la centrul de rotatie al robotului, adica ne pregatim de o rotire
+  If aliniere_centru_rotatie = "on" Then
+    Move_Sync_Encoder(@wheel_ax_sensor_ax_distance, Vmax, "off", "on", "on")
+  EndIf
+  
+  ' aplicam frana la finalul algoritmului de line follower
+  If end_brake = "on" Then
+    Motor.Stop(@stop_string, "True")
+  EndIf
+  
+EndFunction
+'*******************************************************      end line follower intersection function
+
+'******************************************************* line follower encoder function
+Function LF_1S_Encoder (in number port, in string side, in number kp, in number kd, in number Vmax, in number encoder_cm, in string acceleration, in string deceleration, in string end_brake)
+  
+  ' setam senzorii in modul Reflected Light si resetam contoarele motoarelor
+  Sensor.SetMode(port, 0)
+  Motor.ResetCount(@stop_string)
+  
+  ' setam variabilele cu care vom lucra
+  error_old = 0
+  exit_condition = 1 ' conditia de iesire din line follower. Trebuie sa inceapa mereu cu 1
+  
+  ' convertim cm in grade, motoarele nu stiu ce sunt cm :)
+  cm2degree(encoder_cm, encoder)
+  
+  While exit_condition = 1
+    'citiri senzori
+    s1 = Sensor.ReadPercent(port) ' citire senzor stanga
+    s2 = @grey ' pentru ca nu avem doi senzori pentr line follower, senzorul 2 este inlocuit de valoarea @grey
+    CurrentEncoder = ( Math.Abs(Motor.GetCount(@left_motor)) + Math.Abs(Motor.GetCount(@right_motor)) ) / 2 ' determinarea encoder-ului curent
+    
+    ' algoritm acceleratie
+    If acceleration = "on" Then
+      V = ( CurrentEncoder / @AcceleratedEncoder ) * ( Vmax - @V0 ) + @V0
+      V = Math.Abs( V ) 'corectie pentru a fi siguri ca nu dam cu spatele
+      
+      ' daca viteza calculata depaseste viteza maxima, vom folosi viteza maxima
+      If V > Vmax Then
+        V = Vmax
+      EndIf
+      
+    ElseIf acceleration = "off" Then
+      V = Vmax
+    EndIf
+    ' final algoritm acceleratie
+    
+    ' algoritm deceleratie
+    If deceleration = "on" Then
+      If encoder - CurrentEncoder < @DeceleratedEncoder Then 'we must get the last part of the encoder run
+        V = ( (encoder - CurrentEncoder) / @DeceleratedEncoder ) * ( Vmax - @V0 ) + @V0
+        V = Math.Abs( V ) 'corectie pentru a fi siguri ca nu dam cu spatele
+        
+        ' daca viteza calculata depaseste viteza minima, vom folosi viteza minima
+        If V < @V0 Then
+          V = @V0
+        EndIf
+        
+      EndIf
+    EndIf
+    ' final algoritm deceleratie
+    
+    ' Controller PD pentru line follower
+    ' trebuie sa precizam partea liniei pe care se face line follower
+    If side = "stanga" Then
+      error = s1 - s2
+    Else
+      error = s2 - s1
+    EndIf
+    
+    P = @kp_lf * error
+    D = @kd_lf* (error - error_old)
+    
+    ' calculele difera daca sunt motoare medii vs motoare mari
+    If @motor_type = "medium" Then
+      Motor_Left = -1 * ( V + (P + D) )
+    Else
+      Motor_Left =  V + (P + D)
+    EndIf
+    
+    Motor_Right = V - (P + D)
+    error_old = error
+    Motor.StartPower(@left_motor, Motor_Left)
+    Motor.StartPower(@right_motor, Motor_Right)
+    ' final controller PD pentru line follower
+    
+    'verificam conditia de iesire
+    If CurrentEncoder > encoder Then
+      exit_condition = 0
+    EndIf
+    
+  EndWhile
+  
+  ' aplicam frana la finalul algoritmului de line follower
+  If end_brake = "on" Then
+    Motor.Stop(@stop_string, "True")
+  EndIf
+  
+EndFunction
+'*******************************************************      end line follower encoder function
+
+'******************************************************* line follower intersection function
+Function LF_1S_Intersection (in number port, in string side, in number stop_port, in number kp, in number kd, in number Vmax, in string acceleration, in string aliniere_centru_rotatie, in string end_brake)
+  
+  ' setam senzorii in modul Reflected Light si resetam contoarele motoarelor
+  Sensor.SetMode( port,0 ) ' portul  de line follower
+  Sensor.SetMode( stop_port,0 ) ' portul de oprire
+  Motor.ResetCount(@stop_string)
+  
+  ' setam variabilele cu care vom lucra
+  error_old = 0
+  exit_condition = 1 ' conditia de iesire din line follower. Trebuie sa inceapa mereu cu 1
+  
+  While exit_condition = 1
+    'citiri senzori
+    s1 = Sensor.ReadPercent(port) ' citire senzor stanga
+    s2 = @grey ' pentru ca nu avem doi senzori pentr line follower, senzorul 2 este inlocuit de valoarea @grey
+    stop_port_reading = Sensor.ReadPercent(stop_port) ' citire senzor de oprire
+    CurrentEncoder = ( Math.Abs(Motor.GetCount(@left_motor)) + Math.Abs(Motor.GetCount(@right_motor)) ) / 2 ' determinarea encoder-ului curent
+    
+    ' algoritm acceleratie
+    If acceleration = "on" Then
+      V = ( CurrentEncoder / @AcceleratedEncoder ) * ( Vmax - @V0 ) + @V0
+      V = Math.Abs( V ) 'corectie pentru a fi siguri ca nu dam cu spatele
+      
+      ' daca viteza calculata depaseste viteza maxima, vom folosi viteza maxima
+      If V > Vmax Then
+        V = Vmax
+      EndIf
+      
+    ElseIf acceleration = "off" Then
+      V = Vmax
+    EndIf
+    ' final algoritm acceleratie
+    
+    ' Controller PD pentru line follower
+    ' trebuie sa precizam partea liniei pe care se face line follower
+    If side = "stanga" Then
+      error = s1 - s2
+    Else
+      error = s2 - s1
+    EndIf
+    
+    P = @kp_lf * error
+    D = @kd_lf * (error - error_old)
+    
+    ' calculele difera daca sunt motoare medii vs motoare mari
+    If @motor_type = "medium" Then
+      Motor_Left = -1 * ( V + (P + D) )
+    Else
+      Motor_Left =  V + (P + D)
+    EndIf
+    
+    Motor_Right = V - (P + D)
+    Motor.StartPower(@left_motor, Motor_Left)
+    Motor.StartPower(@right_motor, Motor_Right)
+    
+    error_old = error
+    ' final controller PD pentru line follower
+    
+    'verificam conditia de iesire
+    If stop_port_reading < @black Then
+      exit_condition = 0
+    EndIf
+    
+  EndWhile
+  
+  'daca vrem aliniere la centrul de rotatie al robotului, adica ne pregatim de o rotire
+  If aliniere_centru_rotatie = "on" Then
+    Move_Sync_Encoder(@wheel_ax_sensor_ax_distance, Vmax, "off", "on", "off")
+  EndIf
+  
+  ' aplicam frana la finalul algoritmului de line follower
+  If end_brake = "on" Then
+    Motor.Stop(@stop_string, "True")
+  EndIf
+  
+EndFunction
+'*******************************************************       end line follower intersection function
+
+
+
+
+'************************************************************************************************
+'************************************* Functii de move ******************************************
+'************************************************************************************************
+
+'******************************************************* move sync encoder function
+Function Move_Sync_Encoder (in number encoder_cm, in number Vmax, in string acceleration, in string deceleration, in string end_brake)
+  
+  ' resetam contoarele motoarelor
+  Motor.ResetCount("B")
+  Motor.ResetCount("C")
+  
+  'in cazul in care avem nevoie de debugging
+  If @debug = "on" Then
+    LCD.Clear()
+  EndIf
+  
+  ' setam variabilele cu care vom lucra
+  error_old = 0
+  exit_condition = 1 ' conditia de iesire din line follower. Trebuie sa inceapa mereu cu 1
+  ' convertim cm in grade, motoarele nu stiu ce sunt cm :)
+  cm2degree(encoder_cm, encoder)
+  
+  While exit_condition = 1
+    'citiri senzori
+    left_encoder = Motor.GetCount(@left_motor)
+    right_encoder = Motor.GetCount(@right_motor)
+    CurrentEncoder = ( Math.Abs(left_encoder) + Math.Abs(right_encoder) ) / 2 ' determinarea encoder-ului curent
+    
+    'in cazul in care avem nevoie de debugginga
+    If @debug = "on" Then
+      LCD.Write(10,10, left_encoder)
+      LCD.Write(50,10, right_encoder)
+      LCD.Write(100,10, CurrentEncoder)
+      LCD.Update()
+    EndIf
+    
+    ' trebuie verificat cazul in care mergem cu spatele
+    ' la line follower nu ne punem aceste probleme pentru ca nu mergem cu spatele
+    If Vmax < 0 Then
+      sens = -1
+    Else
+      sens = 1
+    EndIf
+    
+    ' algoritm acceleratie
+    If acceleration = "on" Then
+      V = ( CurrentEncoder / @AcceleratedEncoder ) * ( Vmax - @V0 * sens ) + @V0 * sens
+      V = Math.Abs( V ) * sens 'corectie pentru a fi siguri ca nu dam cu spatele
+      
+      ' daca viteza calculata depaseste viteza maxima, vom folosi viteza maxima
+      If Math.Abs( V ) > Math.Abs( Vmax ) Then
+        V = Vmax
+      EndIf
+      
+    ElseIf acceleration = "off" Then
+      V = Vmax
+    EndIf
+    ' final algoritm acceleratie
+    
+    ' algoritm deceleratie
+    If deceleration = "on" Then
+      If encoder - CurrentEncoder < @DeceleratedEncoder Then 'we must get the last part of the encoder run
+        V = ( (encoder - CurrentEncoder) / @DeceleratedEncoder ) * ( Vmax - @V0 * sens ) + @V0 * sens
+        V = Math.Abs( V ) * sens 'corectie pentru a fi siguri ca nu dam cu spatele
+        
+        ' daca viteza calculata depaseste viteza minima, vom folosi viteza minima
+        If Math.Abs( V ) < Math.Abs( @V0 * sens ) Then
+          V = @V0 * sens
+        EndIf
+        
+      EndIf
+    EndIf
+    ' final algoritm deceleratie
+    
+    'in cazul in care avem nevoie de debugging
+    If @debug = "on" Then
+      LCD.Write(10,30, @V0*sens)
+      LCD.Write(50,30, V)
+      LCD.Update()
+    EndIf
+    
+    If @motor_type = "large" Then
+      ' daca sunt motoare mari StartSync va face sincronizarea motoarelor
+      'Motor.StartSync(@stop_string, V, V)
+      
+      ' Controller PD pentru move sync
+      error =  right_encoder -left_encoder
+      P = @kp_move_sync * error
+      D = @kd_move_sync * (error - error_old)
+      Motor_Left =  V + (P + D)
+      Motor_Right = V - (P + D)
+      
+      Motor.StartPower(@left_motor, Motor_Left)
+      Motor.StartPower(@right_motor, Motor_Right)
+      
+      error_old = error
+      
+    Else
+      ' Controller PD pentru move sync
+      error = left_encoder + right_encoder
+      P = @kp_move_sync * error
+      D = @kd_move_sync * (error - error_old)
+      Motor_Left = -1 * ( V + (P + D) )
+      Motor_Right = V - (P + D)
+      
+      Motor.StartPower(@left_motor, Motor_Left)
+      Motor.StartPower(@right_motor, Motor_Right)
+      
+      error_old = error
+    EndIf
+    
+    'exit condition for line follower: encoder
+    If Math.Abs(CurrentEncoder) > encoder Then
+      exit_condition = 0
+    EndIf
+    
+  EndWhile
+  
+  ' aplicam frana la finalul algoritmului de move sync
+  If end_brake = "on" Then
+    Motor.Stop(@stop_string, "True")
+  EndIf
+  
+EndFunction
+'*******************************************************        end move sync encoder function
+
+'******************************************************* move sync wall function
+Function Move_Sync_Encoder_Wall (in number encoder_cm, in number Vmax, in string side, in string acceleration, in string deceleration, in string end_brake)
+  
+  ' resetam contoarele motoarelor
+  Motor.ResetCount("B")
+  Motor.ResetCount("C")
+  
+  'in cazul in care avem nevoie de debugging
+  If @debug = "on" Then
+    LCD.Clear()
+  EndIf
+  
+  ' setam variabilele cu care vom lucra
+  error_old = 0
+  exit_condition = 1 ' conditia de iesire din line follower. Trebuie sa inceapa mereu cu 1
+  ' convertim cm in grade, motoarele nu stiu ce sunt cm :)
+  cm2degree(encoder_cm, encoder)
+  
+  While exit_condition = 1
+    'citiri senzori
+    left_encoder = Motor.GetCount(@left_motor)
+    right_encoder = Motor.GetCount(@right_motor)
+    CurrentEncoder = ( Math.Abs(left_encoder) + Math.Abs(right_encoder) ) / 2 ' determinarea encoder-ului curent
+    
+    'in cazul in care avem nevoie de debugging
+    If @debug = "on" Then
+      LCD.Write(10,10, left_encoder)
+      LCD.Write(50,10, right_encoder)
+      LCD.Write(100,10, CurrentEncoder)
+      LCD.Update()
+    EndIf
+    
+    ' trebuie verificat cazul in care mergem cu spatele
+    ' la line follower nu ne punem aceste probleme pentru ca nu mergem cu spatele
+    If Vmax < 0 Then
+      sens = -1
+    Else
+      sens = 1
+    EndIf
+    
+    ' algoritm acceleratie
+    If acceleration = "on" Then
+      V = ( CurrentEncoder / @AcceleratedEncoder ) * ( Vmax - @V0 * sens ) + @V0 * sens
+      V = Math.Abs( V ) * sens 'corectie pentru a fi siguri ca nu dam cu spatele
+      
+      ' daca viteza calculata depaseste viteza maxima, vom folosi viteza maxima
+      If Math.Abs( V ) > Math.Abs( Vmax ) Then
+        V = Vmax
+      EndIf
+      
+    ElseIf acceleration = "off" Then
+      V = Vmax
+    EndIf
+    ' final algoritm acceleratie
+    
+    ' algoritm deceleratie
+    If deceleration = "on" Then
+      If encoder - CurrentEncoder < @DeceleratedEncoder Then 'we must get the last part of the encoder run
+        V = ( (encoder - CurrentEncoder) / @DeceleratedEncoder ) * ( Vmax - @V0 * sens ) + @V0 * sens
+        V = Math.Abs( V ) * sens 'corectie pentru a fi siguri ca nu dam cu spatele
+        
+        ' daca viteza calculata depaseste viteza minima, vom folosi viteza minima
+        If Math.Abs( V ) < Math.Abs( @V0 * sens ) Then
+          V = @V0 * sens
+        EndIf
+        
+      EndIf
+    EndIf
+    ' final algoritm deceleratie
+    
+    'in cazul in care avem nevoie de debugging
+    If @debug = "on" Then
+      LCD.Write(10,30, @V0*sens)
+      LCD.Write(50,30, V)
+      LCD.Update()
+    EndIf
+    
+    If @motor_type = "large" Then
+
+      Motor_Left =  V
+      Motor_Right = V
+      
+      If side = "left" Then 
+        Motor_Right = Motor_Right + @speed_dif_wall
+      Else
+        Motor_Left = Motor_Left + @speed_dif_wall
+      EndIf
+      
+      Motor.StartPower(@left_motor, Motor_Left)
+      Motor.StartPower(@right_motor, Motor_Right)
+            
+    Else
+      
+      Motor_Left = -1 * V
+      Motor_Right = V
+      
+      If side = "left" Then 
+        Motor_Right = Motor_Right + @speed_dif_wall
+      Else
+        Motor_Left = Motor_Left + @speed_dif_wall
+      EndIf
+      
+      Motor.StartPower(@left_motor, Motor_Left)
+      Motor.StartPower(@right_motor, Motor_Right)
+      
+    EndIf
+    
+    'exit condition for line follower: encoder
+    If Math.Abs(CurrentEncoder) > encoder Then
+      exit_condition = 0
+    EndIf
+    
+  EndWhile
+  
+  ' aplicam frana la finalul algoritmului de move sync
+  If end_brake = "on" Then
+    Motor.Stop(@stop_string, "True")
+  EndIf
+  
+EndFunction
+'*******************************************************        end move sync wall function
+
+'******************************************************* move sync to colour function
+Function Move_Sync_To_Color(in number Vmax, in string acceleration, in string end_brake, in string colour)
+  
+  If colour = "white" Or colour = "black" Then
+    Sensor.SetMode(1, 4)
+    Sensor.SetMode(2, 4)
+  Else
+    Sensor.SetMode(1, 0)
+    Sensor.SetMode(2, 0)
+  EndIf
+  distback = 0
+  ' resetam contoarele motoarelor + resetam senzorii
+  outcol = 0
+  red = 0
+  green = 0
+  blue = 0
+  Motor.ResetCount("BC")
+  
+  'in cazul in care avem nevoie de debugging
+  If @debug = "on" Then
+    LCD.Clear()
+  EndIf
+  
+  ' setam variabilele cu care vom lucra
+  error_old = 0
+  exit_condition = 1 ' conditia de iesire din line follower. Trebuie sa inceapa mereu cu 1
+  cm2degree(2, encoder)
+  While exit_condition = 1
+    'citiri senzori
+    left_encoder = Motor.GetCount(@left_motor)
+    right_encoder = Motor.GetCount(@right_motor)
+    CurrentEncoder = ( Math.Abs(left_encoder) + Math.Abs(right_encoder) ) / 2 ' determinarea encoder-ului curent
+    
+    'in cazul in care avem nevoie de debugging
+    If @debug = "on" Then
+      LCD.Write(10,10, left_encoder)
+      LCD.Write(50,10, right_encoder)
+      LCD.Write(100,10, CurrentEncoder)
+      LCD.Update()
+    EndIf
+    
+    ' trebuie verificat cazul in care mergem cu spatele
+    ' la line follower nu ne punem aceste probleme pentru ca nu mergem cu spatele
+    If Vmax < 0 Then
+      sens = -1
+    Else
+      sens = 1
+    EndIf
+    
+    ' algoritm acceleratie
+    If acceleration = "on" Then
+      V = ( CurrentEncoder / @AcceleratedEncoder ) * ( Vmax - @V0 * sens ) + @V0 * sens
+      V = Math.Abs( V ) * sens 'corectie pentru a fi siguri ca nu dam cu spatele
+      
+      ' daca viteza calculata depaseste viteza maxima, vom folosi viteza maxima
+      If Math.Abs( V ) > Math.Abs( Vmax ) Then
+        V = Vmax
+      EndIf
+      
+    ElseIf acceleration = "off" Then
+      V = Vmax
+    EndIf
+    ' final algoritm acceleratie
+
+    
+    'in cazul in care avem nevoie de debugging
+    If @debug = "on" Then
+      LCD.Write(10,30, @V0*sens)
+      LCD.Write(50,30, V)
+      LCD.Update()
+    EndIf
+    
+    If @motor_type = "large" Then
+      ' daca sunt motoare mari StartSync va face sincronizarea motoarelor
+      'Motor.StartSync(@stop_string, V, V)
+      
+      ' Controller PD pentru move sync
+      error =  right_encoder -left_encoder
+      P = @kp_move_sync * error
+      D = @kd_move_sync * (error - error_old)
+      Motor_Left =  V + (P + D)
+      Motor_Right = V - (P + D)
+      
+      Motor.StartPower(@left_motor, Motor_Left)
+      Motor.StartPower(@right_motor, Motor_Right)
+      
+      error_old = error
+      
+    Else
+      ' Controller PD pentru move sync
+      error = left_encoder + right_encoder
+      P = @kp_move_sync * error
+      D = @kd_move_sync * (error - error_old)
+      Motor_Left = -1 * ( V + (P + D) )
+      Motor_Right = V - (P + D)
+      
+      Motor.StartPower(@left_motor, Motor_Left)
+      Motor.StartPower(@right_motor, Motor_Right)
+      
+      error_old = error
+    EndIf
+    
+    'exit condition 
+    If colour = "white" Or colour = "black" Or colour = "blue" Then
+      
+      Sensor1.Raw3(red, green, blue)
+      If colour =  "white" And red > 150 And green > 150 Then
+        exit_condition = 0
+      ElseIf colour =  "black" And red < 35 And green < 35 And blue < 35 Then
+        exit_condition = 0
+      ElseIf colour = "blue" And red < 30 And green < 30 And blue > 30 Then
+        exit_condition = 0
+      EndIf
+    
+      Sensor2.Raw3(red, green, blue)
+      If colour =  "white" And red > 150 And green > 150 Then
+        exit_condition = 0
+      ElseIf colour =  "black" And red < 35 And green < 35 And blue < 35 Then
+        exit_condition = 0
+      ElseIf colour = "blue" And red < 30 And green < 30 And blue > 30 Then
+        exit_condition = 0
+      EndIf
+      
+    Else
+      
+      If @alin_brown = 1 Then
+        s1 = Sensor.ReadPercent(1)
+        If colour = "brown" And s1 < 50 Then
+          exit_condition = 0
+        EndIf
+      EndIf
+      
+      If @alin_brown = 2 Then
+        s2 = Sensor.ReadPercent(2)
+        If colour = "brown" And s2 < 50 Then
+          exit_condition = 0
+        EndIf
+      EndIf  
+ 
+    EndIf
+
+    
+  EndWhile
+  
+  ' aplicam frana la finalul algoritmului de move sync
+  If end_brake = "on" Then
+    Motor.Stop(@stop_string, "True")
+  EndIf
+  
+EndFunction
+'*******************************************************        end move sync to colour function
+  
+'******************************************************* move sync wall to colour function
+Function Move_Sync_Wall_To_Color(in number Vmax, in string side, in string acceleration, in string end_brake, in string colour)
+  
+  
+  distback = 0
+  ' resetam contoarele motoarelor + resetam senzorii
+  Sensor.SetMode(1, 0)
+  Sensor.SetMode(2, 0)
+  red = 0
+  green = 0
+  blue = 0
+  Motor.ResetCount("BC")
+  
+  'in cazul in care avem nevoie de debugging
+  If @debug = "on" Then
+    LCD.Clear()
+  EndIf
+  
+  ' setam variabilele cu care vom lucra
+  error_old = 0
+  exit_condition = 1 ' conditia de iesire din line follower. Trebuie sa inceapa mereu cu 1
+  cm2degree(2, encoder)
+  While exit_condition = 1
+    'citiri senzori
+    left_encoder = Motor.GetCount(@left_motor)
+    right_encoder = Motor.GetCount(@right_motor)
+    CurrentEncoder = ( Math.Abs(left_encoder) + Math.Abs(right_encoder) ) / 2 ' determinarea encoder-ului curent
+    
+    'in cazul in care avem nevoie de debugging
+    If @debug = "on" Then
+      LCD.Write(10,10, left_encoder)
+      LCD.Write(50,10, right_encoder)
+      LCD.Write(100,10, CurrentEncoder)
+      LCD.Update()
+    EndIf
+    
+    ' trebuie verificat cazul in care mergem cu spatele
+    ' la line follower nu ne punem aceste probleme pentru ca nu mergem cu spatele
+    If Vmax < 0 Then
+      sens = -1
+    Else
+      sens = 1
+    EndIf
+    
+    ' algoritm acceleratie
+    If acceleration = "on" Then
+      V = ( CurrentEncoder / @AcceleratedEncoder ) * ( Vmax - @V0 * sens ) + @V0 * sens
+      V = Math.Abs( V ) * sens 'corectie pentru a fi siguri ca nu dam cu spatele
+      
+      ' daca viteza calculata depaseste viteza maxima, vom folosi viteza maxima
+      If Math.Abs( V ) > Math.Abs( Vmax ) Then
+        V = Vmax
+      EndIf
+      
+    ElseIf acceleration = "off" Then
+      V = Vmax
+    EndIf
+    ' final algoritm acceleratie
+    
+    
+    'in cazul in care avem nevoie de debugging
+    If @debug = "on" Then
+      LCD.Write(10,30, @V0*sens)
+      LCD.Write(50,30, V)
+      LCD.Update()
+    EndIf
+    
+    If @motor_type = "large" Then
+
+      Motor_Left = V
+      Motor_Right = V
+      
+      If side = "left" Then 
+        Motor_Right = Motor_Right + @speed_dif_wall
+      Else
+        Motor_Left = Motor_Left + @speed_dif_wall
+      EndIf
+      
+      Motor.StartPower(@left_motor, Motor_Left)
+      Motor.StartPower(@right_motor, Motor_Right)
+            
+    Else
+      
+      Motor_Left = -1 * V
+      Motor_Right = V
+      
+      If side = "left" Then 
+        Motor_Right = Motor_Right + @speed_dif_wall
+      Else
+        Motor_Left = Motor_Left + @speed_dif_wall
+      EndIf
+      
+      Motor.StartPower(@left_motor, Motor_Left)
+      Motor.StartPower(@right_motor, Motor_Right)
+      
+    EndIf
+    
+    'exit condition
+    Citire_Culoare_HSV(1, outcol)
+    If colour =  "white" And outcol = 6 Then
+      exit_condition = 0
+    ElseIf colour =  "black" And outcol = 1 Then
+      exit_condition = 0
+    ElseIf colour =  "yellow" And outcol = 4 Then
+      exit_condition = 0
+    ElseIf colour =  "red" And outcol = 5 Then
+      exit_condition = 0
+    EndIf
+    
+    Citire_Culoare_HSV(2, outcol)
+    If colour =  "white" And outcol = 6 Then
+      exit_condition = 0
+    ElseIf colour =  "black" And outcol = 1 Then
+      exit_condition = 0
+    ElseIf colour =  "yellow" And outcol = 4 Then
+      exit_condition = 0
+    ElseIf colour =  "red" And outcol = 5 Then
+      exit_condition = 0
+    EndIf  
+
+    
+  EndWhile
+  
+  ' aplicam frana la finalul algoritmului de move sync
+  If end_brake = "on" Then
+    Motor.Stop(@stop_string, "True")
+  EndIf
+  
+EndFunction
+'*******************************************************        end move sync wall to colour function
+
+
+
+
+'*************************************************************************************************
+'********************************* Functii de intoarcere *****************************************
+'*************************************************************************************************
+
+'******************************************************* arc move function
+Function Arc_Move(in number degrees, in number R, in string mod, in number speed)
+  
+  Motor.ResetCount("BC")
+  
+  cm2degree(1, dist)
+  R1 = R * dist
+  R2 = R1 + (@wheel_distance + 0.2) * dist ' +0.2 ca am scazut in global
+  L1 = 2 * Math.Pi * R1 * degrees / 360
+  L2 = 2 * Math.Pi * R2 * degrees / 360
+  P = L1 / L2
+  
+  If @motor_type = "large" Then
+    If mod = "dreapta" Then
+      Motor.MoveSync("BC", speed, speed * P, L2, "true")
+    Else
+      Motor.MoveSync("BC", speed * P, speed, L2, "true") 
+    EndIf
+  Else
+    If mod = "dreapta" Then
+      Motor.MoveSync("BC", -1 * speed, speed * P, L2, "true")
+    Else
+      Motor.MoveSync("BC", speed * P, -1 * speed, L2, "true") 
+    EndIf
+  EndIf
+  
+EndFunction
+'*******************************************************      end arc move function
+
+'******************************************************* robot spin function
+Function Robot_Spin(in number degrees, in string direction, in number speed, in string end_brake)
+  ' Calculam cate grade trebuie sa parcurga robotul in rotire
+  move_tank_cm = degrees * @wheel_distance * Math.Pi / 360
+  ' Transformam gradele in cm pentru a lasa functia Arc_Move_Encoder sa faca restul de transformari
+  
+  ' Prelucram toate variabilele in functie de motor si sensul de rotire
+  If direction = "stanga" Then
+    If @motor_type = "large" Then
+      left_speed = -1 * speed
+      right_speed = speed
+    Else
+      left_speed = speed
+      right_speed = speed
+    EndIf
+  Else
+    If @motor_type = "large" Then
+      left_speed = speed
+      right_speed = -1 * speed
+    Else
+      left_speed = -1 * speed
+      right_speed = -1 * speed
+    EndIf
+  EndIf
+  
+  Arc_Move_Encoder(move_tank_cm, left_speed, right_speed, end_brake)
+  
+EndFunction
+'*******************************************************       end robot spin function
+
+'******************************************************* arc move encoder function
+Function Arc_Move_Encoder(in number encoder_cm, in number left_speed, in number right_speed, in string end_brake)
+  ' Resetam contoarele motoarelor
+  Motor.ResetCount("B")
+  Motor.ResetCount("C")
+  
+  ' Setam variabilele cu care vom lucra
+  error_old = 0
+  exit_condition = 1 ' Conditia de iesire din line follower. Trebuie sa inceapa mereu cu 1
+  
+  ' Convertim cm in grade, motoarele nu stiu ce sunt cm :)
+  cm2degree(encoder_cm, encoder)
+  
+  If @motor_type = "large" Then
+    ' Pentru motoare mari este suficient folosirea comenzii MoveSync
+    Motor.MoveSync(@stop_string, left_speed, right_speed, encoder, "True")
+  Else ' Daca este un robot cu motoare medii
+    While exit_condition = 1
+      
+      ' Citiri senzori
+      left_encoder = Motor.GetCount(@left_motor)
+      right_encoder = Motor.GetCount(@right_motor)
+      CurrentEncoder = ( Math.Abs(right_encoder) + Math.Abs(left_encoder) ) / 2 ' Determinarea encoder-ului curent
+      
+      ' Controller PD pentru move sync
+      ' Pentru a determina corect directia in care trebuie sa se roteasca, calculam semnul matematic
+      sign = Math.Abs(left_speed * right_speed - 1) - Math.Abs(left_speed * right_speed)
+      ' Pentru a realiza o miscare arc, avem nevoie de o ratie intre cele 2 viteze. Altfel, virajul este dezechilibrat
+      ratio = left_speed / right_speed
+      error = left_encoder * sign + right_encoder * ratio
+      P = @kp_move_sync_vir * error
+      D = @kd_move_sync_vir * (error - error_old)
+      
+      Motor_Left = left_speed - (P + D) * sign ' Daca uitam sa modificam semnul, nu va functiona
+      Motor_Right = right_speed - (P + D)
+      
+      Motor.StartPower(@left_motor, Motor_Left)
+      Motor.StartPower(@right_motor, Motor_Right)
+      
+      error_old = error
+      
+      ' Verificam conditia de iesire
+      If CurrentEncoder >= encoder Then
+        exit_condition = 0
+      EndIf
+      
+    EndWhile ' End bucla algoritm
+    
+  EndIf ' End if pentru algoritm motoare medii
+  
+  If @debug = "off" Then
+    LCD.Clear()
+    LCD.Write(1, 10, Motor.GetCount(@left_motor))
+    LCD.Write(1, 20, Motor.GetCount(@right_motor))
+    LCD.Update()
+  EndIf
+  
+  ' Aplicam frana la finalul algoritmului de rotire
+  If end_brake = "on" Then
+    Motor.Stop(@stop_string, "True")
+  EndIf
+  
+EndFunction
+'*******************************************************        end arc move encoder function
+
+
+'******************************************************* rotation to black line function
+Function Robot_Spin_Time (in string direction, in string end_brake)
+  ' resetam contoarele motoarelor
+  Motor.ResetCount(@stop_string)
+  
+  If direction = "stanga" Then
+    sens = -1
+    stop_port = @left_sensor
+  Else
+    sens = 1
+    stop_port = @right_sensor
+  EndIf
+  
+  Time.Reset7()
+  
+  If @motor_type = "large" Then
+    While Time.Get7() < @TimerRobotSpin
+      Motor.StartPower(@left_motor, sens * @Vcorner)
+      Motor.StartPower(@right_motor, -1 * sens * @Vcorner)
+    EndWhile
+  Else
+    While Time.Get7() < @TimerRobotSpin
+      Motor.StartPower(@left_motor, -1 * sens * @Vcorner)
+      Motor.StartPower(@right_motor, -1 * sens * @Vcorner)
+    EndWhile
+  EndIf
+  
+  'we need to stop at precise moment
+  If end_brake = "on" Then
+    Motor.Stop(@stop_string, "True")
+  EndIf
+  
+EndFunction
+'******************************************************* end rotation to black line function
+
+
+'******************************************************* rotation to black line function
+Function 2S_Rotation2Black_Line (in number grade, in string direction, in string end_brake)
+  ' setam senzorii in modul Reflected Light si resetam contoarele motoarelor
+  Sensor.SetMode(@left_sensor,0)
+  Sensor.SetMode(@right_sensor,0)
+  Motor.ResetCount(@stop_string)
+  
+  ' setam variabilele cu care vom lucra
+  isum = 0
+  error_old = 0
+  
+  'setam senzorul de oprire in functie de sensul rotatiei si semnul operatiilor urmatoare
+  If direction = "stanga" Then
+    sens = -1
+    stop_port = @left_sensor
+    Move_Sync_Encoder(3, 70, "on", "on", "on")
+  Else
+    sens = 1
+    stop_port = @right_sensor
+    Move_Sync_Encoder(5, -70, "on", "on", "on")
+  EndIf
+  
+  ' facem o rotire mecanica sa asezam senzorii pe alb
+  Robot_Spin(grade - 20, direction, @Vcorner, "off")
+  
+  ' continuam rotirea pana cand primul senzor din directia de rotire vede negru
+  If @motor_type = "large" Then
+    While Sensor.ReadPercent(stop_port) > @greyt
+      Motor.StartPower(@left_motor, sens * @Vcorner)
+      Motor.StartPower(@right_motor, -1 * sens * @Vcorner)
+    EndWhile
+  Else
+    While Sensor.ReadPercent(stop_port) > @greyt
+      Motor.StartPower(@left_motor, -1 * sens * @Vcorner)
+      Motor.StartPower(@right_motor, -1 * sens * @Vcorner)
+    EndWhile
+  EndIf
+  Speaker.Tone(100, 2000, 300)
+  
+  ' controller PID bazat pe timp pentru aliniere precisa
+  Time.Reset7() ' resetam cronometrul pentru a aplica PID doar pe o durata clara de timp
+  While Time.Get7() < @timer_ki_rotation2black
+    
+    'citiri senzori
+    s1 = Sensor.ReadPercent(@left_sensor)
+    s2 = Sensor.ReadPercent(@right_sensor)
+    
+    error = s1 - s2
+    isum = isum + error ' in cazul PID, insumam toate erorile pentru corectie suplimentara
+    
+    P = @kp_rotation2black * error
+    D = @kd_rotation2black * (error - error_old)
+    I = @ki_rotation2black * isum
+    
+    Motor_Left = P + I + D
+    Motor_Right = -1 * ( P + I + D )
+    
+    If @motor_type = "large" Then
+      Motor.StartPower(@right_motor, Motor_Left)
+    Else
+      Motor.StartPower(@right_motor, -1 * Motor_Left)
+    EndIf
+    
+    Motor.StartPower(@left_motor, Motor_Right)
+    
+    error_old = error
+    ' nu mai avem conditie de iesire explicita pentru ca am scris conditia de iesire direct in while
+  EndWhile
+  
+  'we need to stop at precise moment
+  If end_brake = "on" Then
+    Motor.Stop(@stop_string, "True")
+  EndIf
+  
+EndFunction
+'******************************************************* end rotation to black line function
+
+'******************************************************* one wheel rotation to black line function
+Function 2S_Rotation2Black_Line_One_Wheel (in string direction, in string end_brake)
+  ' setam senzorii in modul Reflected Light si resetam contoarele motoarelor
+  Sensor.SetMode(@left_sensor,0)
+  Sensor.SetMode(@right_sensor,0)
+  Motor.ResetCount(@stop_string)
+  
+  Motor.Stop("BC", "true")
+  Motor.ResetCount("BC")
+  
+  If direction = "dreapta" Then
+    While Math.ABS(Motor.GetCount("B")) < 450
+      Motor.StartPower("B", -60)
+    EndWhile
+    Speaker.Tone(100, 100, 100)
+    While Sensor.ReadPercent(@left_sensor) > @black
+      Motor.StartPower("B", -60)
+    EndWhile
+  
+    Motor.ResetCount("B")
+    While Math.ABS(Motor.GetCount("B")) < 20
+      Motor.StartPower("B", -60)
+    EndWhile
+  Else
+    While Math.ABS(Motor.GetCount("C")) < 450
+      Motor.StartPower("C", -60)
+    EndWhile
+    Speaker.Tone(100, 100, 100)
+    While Sensor.ReadPercent(@left_sensor) > @black
+      Motor.StartPower("C", -60)
+    EndWhile
+  
+    Motor.ResetCount("C")
+  
+    While Math.ABS(Motor.GetCount("C")) < 20
+      Motor.StartPower("C", -60)
+    EndWhile
+  EndIf
+  
+  'we need to stop at precise moment
+  If end_brake = "on" Then
+    Motor.Stop(@stop_string, "True")
+  EndIf
+  
+EndFunction
+'*******************************************************      end one wheel rotation to black line function
+
+'*********************************************** 1 sensor robot rotation 2 black line function
+Function 1S_Rotation2Black_Line (in string direction, in string side, in string end_brake)
+  ' setam senzorii in modul Reflected Light si resetam contoarele motoarelor
+  Sensor.SetMode(@lf_sensor,0)
+  Motor.ResetCount(@stop_string)
+  
+  ' setam variabilele cu care vom lucra
+  isum = 0
+  error_old = 0
+  stop_port = @lf_sensor
+  
+  'setam senzorul de oprire in functie de sensul rotatiei si semnul operatiilor urmatoare
+  If direction = "dreapta" Then
+    sens = 1
+  Else
+    sens = -1
+  EndIf
+  
+  ' facem o rotire mecanica sa asezam senzorii pe alb
+  Robot_Spin(80, direction, @Vcorner, "off")
+  
+  ' continuam rotirea pana cand primul senzor din directia de rotire vede negru
+  While  Sensor.ReadPercent(stop_port) > @grey
+    Motor.StartPower(@left_motor, sens * @Vcorner)
+    Motor.StartPower(@right_motor, sens * @Vcorner)
+  EndWhile
+  
+  ' controller PID bazat pe timp pentru aliniere precisa
+  Time.Reset7() ' resetam cronometrul pentru a aplica PID doar pe o durata clara de timp
+  While Time.Get7() < @timer_ki_rotation2black
+    
+    ' citiri senzori
+    s1 = Sensor.ReadPercent(@lf_sensor)
+    s2 = @black
+    
+    ' avand un singur senzor, trebuie sa decidem pe care parte a liniei are loc alinierea
+    ' depinde de partea pe care urmeaza sa continuam cu line follower
+    If side = "stanga" Then
+      error = s1 - s2
+    Else
+      error = s2 - s1
+    EndIf
+    
+    isum = isum + error ' in cazul PID, insumam toate erorile pentru corectie suplimentara
+    
+    P = @kp_rotation2black * error
+    D = @kd_rotation2black * (error - error_old)
+    I = @ki_rotation2black * isum
+    
+    Motor_Left = P + I + D
+    Motor_Right = -1 * ( P + I + D )
+    
+    If @motor_type = "large" Then
+      Motor.StartPower(@left_motor, -1 * Motor_Left)
+    Else
+      Motor.StartPower(@left_motor, -1 * Motor_Left)
+    EndIf
+    
+    Motor.StartPower(@right_motor, -1 * Motor_Right)
+    
+    error_old = error
+    ' nu mai avem conditie de iesire explicita pentru ca am scris conditia de iesire direct in while
+  EndWhile
+  
+  'we need to stop at precise moment
+  If end_brake = "on" Then
+    Motor.Stop(@stop_string, "True")
+  EndIf
+  
+EndFunction
+'***********************************************        end 1 sensor robot rotation 2 black line function
+
+'*********************************************** S move function
+Function S_Move (in number distance, in string direction, in string end_brake)
+  grade = Math.ArcCos(1 - distance / @wheel_distance) * 2 * @wheel_distance / @wheel_diameter * 180 / Math.Pi
+  
+  If @motor_type = "large" Then
+    If direction = "dreapta" Then
+      Motor.MoveSync(@stop_string, @Vcorner, 0, grade, "True")
+      Motor.MoveSync(@stop_string, 0, @Vcorner, grade, "True")
+    Else
+      Motor.MoveSync(@stop_string, 0, @Vcorner, grade, "True")
+      Motor.MoveSync(@stop_string, @Vcorner, 0, grade, "True")
+    EndIf
+  Else
+    If direction = "dreapta" Then
+      Motor.MoveSync(@stop_string, -1 * @Vcorner, 0, grade, "True")
+      Motor.MoveSync(@stop_string, 0, @Vcorner, grade, "True")
+    Else
+      Motor.MoveSync(@stop_string, 0, @Vcorner, grade, "True")
+      Motor.MoveSync(@stop_string, -1 * @Vcorner, 0, grade, "True")
+    EndIf
+  EndIf
+  
+  ' we need to stop at precise moment
+  If end_brake = "on" Then
+    Motor.Stop(@stop_string, "True")
+  EndIf
+EndFunction
+'***********************************************      end S move function
+
+
+'*********************************************** S move backward function
+Function S_Move_Backward (in number distance, in string direction, in string end_brake)
+  grade = Math.ArcCos(1 - distance / @wheel_distance) * 2 * @wheel_distance / @wheel_diameter * 180 / Math.Pi
+  
+  If @motor_type = "large" Then
+    If direction = "stanga" Then
+      Motor.MoveSync(@stop_string, 0, -@Vcorner, grade, "True")
+      Motor.MoveSync(@stop_string, -@Vcorner, 0, grade, "True")
+    Else
+      Motor.MoveSync(@stop_string, -@Vcorner, 0, grade, "True")
+      Motor.MoveSync(@stop_string, 0, -@Vcorner, grade, "True")
+    EndIf
+  Else
+    If direction = "dreapta" Then
+      Motor.MoveSync(@stop_string, @Vcorner, 0, grade, "True")
+      Motor.MoveSync(@stop_string, 0, -1 * @Vcorner, grade, "True")
+    Else
+      Motor.MoveSync(@stop_string, 0, -1 * @Vcorner, grade, "True")
+      Motor.MoveSync(@stop_string, @Vcorner, 0, grade, "True")
+    EndIf
+  EndIf
+  
+  ' we need to stop at precise moment
+  If end_brake = "on" Then
+    Motor.Stop(@stop_string, "True")
+  EndIf
+EndFunction
+'***********************************************      end S move bakward function
+
+
+
+'*************************************************************************************************
+'********************************* Functii de aliniere *******************************************
+'*************************************************************************************************
+
+'******************************************************* aliniere function
+Function aliniere(in string direction, in number speed)
+  
+  exit_condition = 0
+   If @motor_type = "large" Then
+    If direction = "forward" Then
+      Motor.Start("B", speed)
+      Motor.Start("C", speed)
+    Else
+      Motor.Start("B", speed)
+      Motor.Start("C", speed)
+    EndIf
+  Else
+    If direction = "forward" Then
+      Motor.Start("B", speed)
+      Motor.Start("C", -1 * speed)
+    Else
+      Motor.Start("B", -1 * speed)
+      Motor.Start("C", speed)
+    EndIf
+  EndIf
+  Program.Delay(400)
+  
+  Time.Reset1()
+  While exit_condition = 0
+    ' Check if either motor has slowed down or if the time limit is reached
+    If Math.Abs(Motor.GetSpeed("B")) < Math.Abs(speed - 15) Or Math.Abs(Motor.GetSpeed("C")) < Math.Abs(speed - 15) Or Time.Get1() > @aliniere_time Then
+      exit_condition = 1
+    EndIf
+  EndWhile
+  
+  Motor.Stop("BC", "True")
+  
+EndFunction
+'*******************************************************       end aliniere function
+
+
+
+
+'***********************************************************************************************
+'******************************************* Thread ********************************************
+'***********************************************************************************************
+
+Sub Thread_Sub
+  Time.Reset9() 'resetam cronometrul 9 pentru a masura 2 minute
+  ' variabile pentru subprogram
+  @stop_sound = 0 ' flag sa oprim sunetul
+  erroldA = 0
+  erroldD = 0
+  
+  ' resetam contoarele motoarelor implicate in bratul manipulator (gheara + lift)
+  Motor.ResetCount("A")
+  cnta=0
+  cntr=0
+  cntn=0
+  cntv=0
+  
+  While 1 > 0 'bucla continua de executie
+    
+    '' LCD.Write(10, 10, @teamname)
+    ' LCD.Update()
+    ' verificarea timpului de rulare si markerul de 2 minute
+    If @max_execution_time < Time.Get9() / 1000 And @stop_sound = 0 Then
+      Speaker.Tone(100, 1000, 1000)
+      @stop_sound = 1
+    EndIf
+    ' end verificare timp de executie
+    
+    ' manipulare brat
+    errD = deltaD - Motor.GetCount("D")
+    errA = deltaA - Motor.GetCount("A")
+    
+    vitD = kpLift * errD + kdLift * (errD - erroldD)
+    erroldD = errD
+    vitA = kpClaw * errA + kdClaw * (errA - erroldA)
+    erroldA = errA
+    
+    Motor.StartPower("D", vitD)
+    Motor.StartPower("A", vitA)
+    ' end manipulare brat
+    
+    If @show_live_time = "on" Then
+      LCD.Write(7, 70, Time.Get8()/1000)
+    EndIf
+   
+  EndWhile
+EndSub
+
+
+
+
+'*************************************************************************************************
+'*********************************** Functii de citire *******************************************
+'*************************************************************************************************
+
+
+'******************************************************* check rgb function
+Function Check_RGB_Values (in number port)
+  ' pregatim variabilele cu care vom lucra
+  red = 0
+  green = 0
+  blue = 0
+  MaxRed = 0
+  MaxGreen = 0
+  MaxBlue = 0
+  
+  ' pregatim senzorul cu care vrem sa facem citirile
+  Sensor.SetMode(port, 4)
+  
+  ' vom afisa pe ecran, deci stergem ecranul
+  LCD.Clear()
+  
+  ' vom rula o bucla pentru afisare continua
+  While Buttons.GetClicks() <> "E" ' pentru a opri programul la o apasare de buton
+    ' citirea este salvata intr-un vector
+    
+    If port = 1 Then
+      Sensor1.Raw3(red, green, blue)
+    ElseIf port = 2 Then
+      Sensor2.Raw3(red, green, blue)
+    ElseIf port = 3 Then
+      Sensor3.Raw3(red, green, blue)
+    ElseIf port = 4 Then
+      Sensor4.Raw3(red, green, blue)
+    EndIf
+    
+    ' salvam valorile maxime citite
+    If red > MaxRed Then
+      MaxRed = red
+    EndIf
+    If green > MaxGreen Then
+      MaxGreen = green
+    EndIf
+    If blue > MaxBlue Then
+      MaxBlue = blue
+    EndIf
+    
+    ' afisam citirile pe ecran
+    LCD.Clear()
+    LCD.Write(1,1, "R: ")
+    LCD.Write(20,1, red)
+    LCD.Write(1,15, "G: ")
+    LCD.Write(20,15, green)
+    LCD.Write(1,30, "B: ")
+    LCD.Write(20,30, blue)
+    LCD.Write(1,45, "maxR: ")
+    LCD.Write(40,45, MaxRed)
+    LCD.Write(1,60, "maxG: ")
+    LCD.Write(40,60, MaxGreen)
+    LCD.Write(1,75, "maxB: ")
+    LCD.Write(40,75, MaxBlue)
+    LCD.Update()
+    Wait(0.3)
+  EndWhile
+  
+  ' sa avem timp sa citim ecranul
+  Wait(5)
+  
+EndFunction
+'************************************************************************  end check RGB function
+
+
+'******************************************************* HSV function
+Function Citire_Culoare_HSV (in number port, out number col)
+  Sensor.SetMode(port, 4)
+  red = 0
+  green = 0
+  blue = 0
+  port = 3
+  
+  If port = 1 Then
+    Sensor1.Raw3(red, green, blue)
+  ElseIf port = 2 Then
+    Sensor2.Raw3(red, green, blue)
+  ElseIf port = 3 Then
+    Sensor3.Raw3(red, green, blue)
+  ElseIf port = 4 Then
+    Sensor4.Raw3(red, green, blue)
+  EndIf
+
+  red = red / @max_R * 255
+  green = green / @max_G * 255
+  blue = blue / @max_B * 255
+
+  max = Math.Max(red, green)
+  max = Math.Max(max, blue)
+  min = Math.Min(red, green)
+  min = Math.Min(min, blue)
+  'max = 323
+  'min = 182
+
+  @r = red
+  @g = green
+  @b = blue
+  If max = min Then
+    hue = 0
+  EndIf
+  
+  If max = @r Then
+    If @g >= @b Then
+      hue = 60 * (@g - @b) / (max - min)
+    Else
+      hue = 60 * (@g - @b) / (max - min) + 360
+    EndIf
+  ElseIf max = @g Then
+    hue = 60 * (@b - @r) / (max - min) + 120
+  ElseIf max = @b Then
+    hue = 60 * (@r - @g) / (max - min) + 240
+  EndIf
+
+  If max = 0 Then
+    sat = 0
+  Else
+    sat = 1-min/max
+  EndIf
+
+  val = max / 255
+
+  If sat >= 0.55 And val >= 0.09 Then
+    If hue >= 0 And hue <= 7 Then
+      col = 5 ' rosu
+    Else
+      If hue >= 7.00001 And hue <= 62 Then
+        col = 4 ' galben
+      Else
+        If hue >= 75.00001 And hue <= 220 Then
+          col = 3 ' verde
+        Else
+          If hue >= 220.00001 And hue <= 270 Then
+            col = 2 ' albastru
+          Else
+            If hue >= 270.00001 And hue <= 360 Then
+              col = 5 ' rosu
+            EndIf
+          EndIf
+        EndIf
+      EndIf
+    EndIf
+  ElseIf val <= 0.25 And val >= 0.05 Then
+    col = 1 ' negru
+    Else
+      col = 0 ' none
+    If val > 0.25 Then
+      col = 6 ' alb
+    EndIf
+  EndIf
+  
+  If @debug = "on" Then
+    LCD.Write(20, 20, "r=" + @r)
+    LCD.Write(20, 40, "g=" + @g)
+    LCD.Write(20, 60, "b=" + @b)
+    LCD.Write(20, 80, "hue=" + hue)
+    LCD.Write(20, 100, "col=" + col)
+    LCD.Write(80, 20, "sat=" + sat)
+    LCD.Write(80, 40, "val=" + val)
+    LCD.Write(80, 60, "max=" + max)
+    LCD.Write(80, 100, "min=" + min)
+    LCD.Update()
+  EndIf
+  
+EndFunction
+'*******************************************************      end HSV function
+
+
+
+
+'*************************************************************************************************
+'*********************************** Functii de wait *********************************************
+'*************************************************************************************************
+
+'******************************************************* wait function
+Function Wait (in number sec)
+  
+  Time.Reset5()
+  While Time.Get5() < sec * 1000
+    
+  EndWhile
+  
+EndFunction
+'*******************************************************      end wait function
+
+'******************************************************* wait until press function
+Sub wait_until_press
+  
+  While Buttons.GetClicks() <> "E"
+  EndWhile
+  
+EndSub
+'*******************************************************      end wait until press function
+
+
+
+
+
+'***********************************************************************************************
+'*********************************** Functii WRO 2024 ******************************************
+'***********************************************************************************************

@@ -1,0 +1,127 @@
+' WRO2024 ~ Nerdvana Taurus
+'**************************************** Include **********************************************
+include "variabile_globale"
+include "functions"
+include "thread_control"
+'********************************************* end include
+
+'********************************** Setarea cronometre *****************************************
+Motor.ResetCount(@stop_string)
+Time.Reset8() ' cronometru care tine timpul de executie al programului. Va fi afisat la final.
+'********************************************* end setare cronometre
+
+'******************************* Start setare Thread *******************************************
+Thread.Run = Thread_Sub
+Sistem_Init()
+'******************************** End setare Thread  *******************************************
+
+
+@lf_2s_speed = 90
+@lf_2s_speed_small = 70
+@lf_1s_speed = 80
+@lf_1s_read_speed = 80
+@move_sync_speed = 95
+@move_sync_speed_small = 70
+@move_syncback_speed = -95
+@move_syncback_speed_small = -70
+@move_sync_speed_luare_cuburi = 50
+@move_syncback_speed_luare_cuburi = -50
+@2s_turn2black_speed = 80
+@robot_spin_speed = 50
+@aliniere_speed = -50
+@lf_2s_speedtransit = 95
+@Vcorner = 65
+
+
+
+@start_poz = 2
+
+'******************************** End setare viteze  *******************************************
+'***********************************************************************************************
+'******************************** Programul principal ******************************************
+
+'' Debris 1 & 2
+Move_Sync_Encoder(69, @move_syncback_speed, "on", "on", "on")
+Gheara_Close()
+Arc_Move(20, 0, "dreapta", -70)
+Lift_Semi()
+Wait(0.3)
+Arc_Move(20, 0, "dreapta", 70)
+Move_Sync_Encoder(46, @move_sync_speed, "on", "on", "on")
+'' End Debris 1 & 2
+
+
+'' Apa 1
+Robot_Spin(102, "stanga", @robot_spin_speed, "on")
+Move_Sync_Encoder(47.5, @move_syncback_speed, "on", "on", "on")
+Robot_Spin_Time("dreapta", "on")
+Robot_Spin(4, "stanga", @robot_spin_speed, "on")
+Lift_Apa_Down()
+Wait(1)
+Robot_Spin(10, "stanga", @robot_spin_speed, "on")
+Lift_Semi()
+'' End Apa 1
+
+
+'' Lasare debris
+Robot_Spin(65, "stanga", @robot_spin_speed, "on")
+Lift_Down()
+'' End Lasare Debris
+
+
+'' Intrare pe zid
+Arc_Move(115, 0, "dreapta", 40)
+Move_Sync_Encoder(18, @move_sync_speed, "on", "on", "on")
+Arc_Move(30, 14, "stanga", -40)
+
+Gheara_Semi()
+
+Move_Sync_Encoder_Wall(25, @move_sync_speed, "dreapta", "on", "on", "on")
+Move_Sync_To_Color(-40, "on", "on", "white")
+'' End Intrare pe zid
+
+
+'' Luare doua cuburi rosii
+Move_Sync_Encoder_Wall(10, @move_sync_speed_luare_cuburi, "dreapta", "on", "on", "on")
+Gheara_Close()
+Lift_Semi_1_Cub_Up()
+
+Move_Sync_Encoder_Wall(8.2, @move_sync_speed_luare_cuburi, "dreapta", "on", "on", "on")
+Lift_Semi_1_Cub_Limit()
+Gheara_Semi()
+Lift_Down()
+Move_Sync_Encoder_Wall(0.8, @move_sync_speed_luare_cuburi, "dreapta", "on", "on", "on")
+Gheara_Close()
+'' End Luare doua cuburi rosii
+
+
+'' Transit pe diagonala
+Arc_Move(25, 30, "stanga", 50)
+Arc_Move(75, 0, "stanga", -50)
+
+Move_Sync_Encoder(110, @move_sync_speed, "on", "on", "on")
+
+Robot_Spin(140, "dreapta", @robot_spin_speed, "on")
+aliniere("backward", -50)
+'' End Transit pe diagonala
+
+
+'' Intrare pe zid 2
+Move_Sync_Encoder(3, @move_sync_speed, "on", "on", "on")
+Robot_Spin(95, "dreapta", @robot_spin_speed, "on")
+'' End Intrare pe zid 2
+
+
+  
+'*********()*************************************** end program principal
+'************************************************ afisare timp de rulare
+'Time
+LCD.Clear()
+LCD.Write(7, 20, Time.Get8() / 1000)
+LCD.Update()
+
+Motor.Stop(@stop_string, "True")
+stop_sound = 1
+
+Program.Delay(20000)
+'************************************************** end program

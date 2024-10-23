@@ -1,0 +1,241 @@
+ '********************************************** Variabile globale ***********************************************
+'''''''''''''''''''''''''''''
+' variabile determinate pe plansa pe care se executa misiunea
+' dependente de conditiile externe: constructia robotului, lumina, culorile de pe plansa,
+'                                   calitatea materialului plansei
+' se vor ajusta la inceput, in perioada de testare
+'''''''''''''''''''''''''''''
+@teamname = "WRO2024 ~ NERDVANA TAURUS" '"WRO2024 ~ NERDVANA TAURUS"
+
+'********************************* Variabile dependente de constructia robotului ********************************
+
+' Tip string, cu valori "large" / "medium"
+@motor_type = "medium"
+
+' left_motor - portul motorului stanga folosit pentru navigare (A/B/C/D).
+@left_motor = "B"
+
+' right_motor - portul motorului dreapta folosit pentru navigare (A/B/C/D).
+@right_motor = "C"
+
+' stop_string - concatenam stringuri pentru porturile motoarelor. Necesar pentru functii precum Motor.GetCount sau
+'               Motor.Stop.
+@stop_string = Text.Append(@left_motor, @right_motor)
+
+' wheel_diameter - diametrul cauciului (exprimat in cm). Se regaseste pe lateralul cauciucului folosit
+@wheel_diameter = 6.24
+
+' wheel_distance - distanta (exprimata in cm) dintre cele doua roti.
+'  se masoara de la exteriorul unei roti pana la interiorul rotii paralele
+@wheel_distance = 17.2
+
+' wheel_ax_sensor_ax_distance - distanta (exprimata in cm) de la axul rotilor pana la mijlocul senzorilor
+@wheel_ax_sensor_ax_distance = 8.2
+
+
+'********************************* Variabile folosite la algoritimi ********************************
+
+' line follower - 
+' cu 2 senzori:
+' left_sensor - portul senzorului stanga folosit pentru line follower
+@left_sensor = 1
+
+' right_sensor - portul senzorului dreapta folosit pentru line follower
+@right_sensor = 2
+
+' cu 1 senzor:
+@lf_sensor = 1
+
+
+'********************************* Valorile culorilor de pe plansa *********************************
+' black - valoarea culorii negre de pe plansa
+@black = 15
+
+' white - valoarea culorii albe de pe plansa
+@white = 85
+
+' grey - valoarea intersectiei de culoare alb-negru
+@grey = 30
+@greyt = 30
+@greycitire1s = 40
+
+
+'************************************** Variabile viteza - nav *************************************
+' V0 - viteza de start a oricarui algoritm de line follower / move sync
+@V0 = 20
+
+' Vmax - viteza la care trebuie sa ajunga maxim algoritmul de line follower / move sync
+@Vmax = 95
+
+' Vcorner - viteza la care robotul face virajele
+@Vcorner = 70
+
+' Viteza de diferenta intre motoare pentru wall follow
+@speed_dif_wall = -6
+
+
+'************************************ Variabile de tip kp/ki/kd ************************************
+' kp_lf - valoarea optima de kp pentru algoritmul de line follower
+@kp_lf = 0.7
+
+' kd_lf - valoarea optima de kd pentru algoritmul de line follower
+@kd_lf = 4.6
+
+' ki_lf - valoarea optima de kd pentru algoritmul de line follower
+@ki_lf = 0
+
+' kp_lf - valoarea optima de kp pentru algoritmul de line follower
+@kp_1lf = 1
+
+' kd_lf - valoarea optima de kd pentru algoritmul de line follower
+@kd_1lf = 4
+
+' kp_move_sync - valoarea optima de kp pentru algoritmul de move_sync
+@kp_move_sync = 2.1
+
+' kd_move_sync - valoarea optima de kd pentru algoritmul de move_sync
+@kd_move_sync = 1.1
+
+' kp_move_sync - valoarea optima de kp pentru algoritmul de move_sync
+@kp_move_sync_vir = 2.9
+@kd_move_sync_vir = 1
+@ki_move_sync_vir = 0.001
+
+' urmatoarele variabile sunt incluse direct in functia Rotation2Black_Line
+' kp_rotation2black - valoarea optima de kp pentru algoritmul de rotire cu oprirea senzorilor la linia neagra
+@kp_rotation2black = 0.7
+
+' kd_rotation2black - valoarea optima de kd pentru algoritmul de rotire cu oprirea senzorilor la linia neagra
+@kd_rotation2black = 2.5
+
+' ki_rotation2black - valoarea optima de ki pentru algoritmul de rotire cu oprirea senzorilor la linia neagra
+@ki_rotation2black = 0.01
+
+'timer_ki_rotation2black - timp de functionare al algoritmului PID din functia Rotation2Black_Line; valoare in ms
+@timer_ki_rotation2black = 125
+
+' AcceleratedEncoder - distanta (exprimate in grade de motor) pentru a accelera de la V0 la Vmax(50-150 in general)
+@AcceleratedEncoder = 70
+
+' DeceleratedEncoder - distanta (exprimate in grade de motor) pentru a deccelera de la Vmax la V0(50-150 in general)
+@DeceleratedEncoder = 70
+
+'******************** Variabile folosite pentru brate, executie in thread ******************
+
+' coeficienti gheara
+@kpClaw = 7.5
+@kdClaw = 6
+
+'' coeficienti lift
+@kpLift = 3
+@kdLift = 17
+@kdLift_copy = @kdLift
+
+' diferenta de unghi. Intotdeauna pornim de la 0
+@deltaA = 0
+@deltaD = 0
+
+
+'''''''''''''''''''''''''''''
+''''' Constante globale '''''
+'''''''''''''''''''''''''''''
+' durata maxima de executie a probei
+@max_execution_time = 120 'exprimat in secunde
+@aliniere_time = 800 ' durata maxima de executie pentru alinieri
+@alinierep_time = 800 ' durata maxima de executie pentru alinierip
+@TimerRobotSpin = 500
+
+@debug = "off" ' debug 
+@fastmode = "on" ' fast
+@debrie_done = "off"
+@show_live_time = "off"
+
+' cat timp are nevoie sa faca citirea de culoare pentru a se asigura ca este corecta citirea
+@timp_citire_culoare = 0.3 'exprimat in secunde
+
+
+'******************************** Variabile distanta plansa zid(alb) *******************************
+' se aduna la distantele dinainte de aliniere
+' se calculeaza dupa pozitia de start a robotului (back/front/left/right)
+@left_side = 0.0
+@right_side = 0.0
+@front_side = 0.0
+@back_side = 0.0
+
+'********************************* Variabile folosite pentru culori ********************************
+
+
+' valorile citite pe alb (valorile maxime)
+@max_R = 340
+@max_G = 320
+@max_B = 292
+
+
+'************************************ Variabile viteza deplasare ***********************************
+@lf_2s_speed = 90
+@lf_2s_speed_small = 80
+@lf_1s_speed = 80
+@lf_1s_read_speed = 80
+@move_sync_speed = 95
+@move_sync_speed_small = 82
+@move_syncback_speed = -95
+@move_syncback_speed_small = -82
+@move_sync_speed_luare_cuburi = 78
+@move_syncback_speed_luare_cuburi = -78
+@2s_turn2black_speed = 80
+@robot_spin_speed = 75
+@aliniere_speed = -50
+@lf_2s_speedtransit = 95
+@Vcorner = 65
+
+
+'****************************************** Alte variabile *****************************************
+
+'' Culori
+@r_val_white = 236
+@g_val_white = 230
+@b_val_white = 180
+
+@r_val_black = 30
+@g_val_black = 33
+@b_val_black = 29
+
+'@r_val_red = 
+'@g_val_red =
+'@b_val_red =
+
+'@r_val_yellow =
+'@g_val_yellow =
+'@b_val_yellow =
+'' End Culori
+
+'' Citire
+@cnt_citiri = 0
+@cntB = 0  ' 0
+@cntG = 0  ' 1
+@col = 0
+
+
+'' Poz citiri
+@p1 = "NONE"
+@p2 = "NONE"
+@p3 = "NONE"
+@p4 = "NONE"
+@p5 = "NONE"
+@p6 = "NONE"
+@check_citire_separare = 0
+@stacare_cuburi_5_6 = 0 ' 0 daca da, 1 daca face cazuri
+
+'' Culori turnuri de 2 inainte de construirea finala
+@b_tower = "NONE"
+@m_tower = "NONE"
+@f_tower = "NONE"
+
+
+@cubB = 0
+@cubG = 0
+
+
+@start_poz = 1
+@stop_sound = 0
+@alin_brown = 1

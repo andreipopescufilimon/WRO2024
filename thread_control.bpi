@@ -1,0 +1,144 @@
+'**********************************************************************************************
+' Urmatoarele subprograme se adreseaza bratului (lfit + gheara)
+' valorile delta sunt grade de motor
+'***********************************************************************************************
+
+
+Sub Sistem_Init
+  
+  @DeltaA = -5
+  @DeltaD = -10
+  Wait(0.1)
+  
+EndSub
+
+
+'***********************  THREAD LIFT  **************************
+Sub Lift_Down
+  
+  @DeltaA = -5
+  Wait(0.3)
+
+EndSub
+
+
+Sub Lift_Up
+  
+  @DeltaA = 650
+  Wait(0.3)
+
+EndSub
+
+Sub Lift_Semi
+  
+  @DeltaA = 300
+  Wait(0.3)
+
+EndSub
+
+
+Sub Lift_Semi_1_Cub_Up
+  
+  @DeltaA = 370
+  Wait(0.5)
+
+EndSub
+
+
+Sub Lift_Semi_1_Cub_Limit
+  
+  @DeltaA = 285
+  Wait(0.2)
+
+EndSub
+
+
+
+
+Sub Lift_Apa_Down
+  
+  @DeltaA = -10
+  Wait(0.3)
+
+EndSub
+
+
+
+'*********************** THREAD GHEARA **************************
+
+Sub Gheara_Close
+  
+  @DeltaD = 300
+  Wait(0.3)
+
+EndSub
+
+
+Sub Gheara_Semi
+  
+  @DeltaD = 100
+  Wait(0.3)
+
+EndSub
+
+Sub Gheara_Open
+  
+  @DeltaD = -5
+  Wait(0.3)
+
+EndSub
+
+
+
+
+
+'' resetam vectorul de frecventa de culoare
+'Sub Reset_Frecventa_Culoare 
+  'For i = 0 to 7
+    '@frecventa[i] = 0
+  'EndFor
+'EndSub
+
+'' resetam vectorul de frecventa de culoare
+'Function Adaugare_Frecventa_Culoare  (in number color)
+  '@frecventa[color] = @frecventa[color] + 1
+'EndFunction
+
+'' salvam culoarea citita. Cautam in vectorul de frecventa si pastram 
+'' cea mai intalnita culoare dintre citirile efectuate
+'Function Salvare_Culoare (out number color)
+  'max_value = @frecventa[0]
+  'color = 0
+  
+  'For i = 1 to 7
+    'If max_value < @frecventa[i] Then
+      'max_value = @frecventa[i]
+      'color = i
+    'EndIf
+  'EndFor
+
+'EndFunction
+
+' functie de citire a culorii cubului. Citim o perioada de timp si introducem 
+' in vectorul de frecventa. Apoi, salvam cea mai intalnita culoare intr-o variabila
+'Function Citire_Cub (out number color)
+  'Reset_Frecventa_Culoare()
+  'Time.Reset1()
+  'While Time.Get1() < @timp_citire_culoare
+    'Citire_Culoare (4, "cub", color)
+    'Adaugare_Frecventa_Culoare(color)
+  'EndWhile
+  'Salvare_Culoare(cub) 
+'EndFunction
+
+' functie de citire a culorii chenarului. Citim o perioada de timp si introducem 
+' in vectorul de frecventa. Apoi, salvam cea mai intalnita culoare intr-o variabila
+'Function Citire_Chenar (out number color)
+  'Reset_Frecventa_Culoare()
+  'Time.Reset1()
+  'While Time.Get1() < @timp_citire_culoare
+    'Citire_Culoare (3, "chenar", color)
+    'Adaugare_Frecventa_Culoare(color)
+  'EndWhile
+  'Salvare_Culoare(chenar) 
+'EndFunction
