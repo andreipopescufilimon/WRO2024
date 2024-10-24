@@ -48,17 +48,16 @@ EndSub
 Sub Lift_Semi_1_Cub_Limit
   
   @DeltaA = 285
-  Wait(0.2)
+  Wait(0.4)
 
 EndSub
 
 
 
-
 Sub Lift_Apa_Down
   
-  @DeltaA = -10
-  Wait(0.3)
+  @DeltaA = -20
+  'Wait(0.3)
 
 EndSub
 

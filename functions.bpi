@@ -779,8 +779,13 @@ Function Move_Sync_Wall_To_Color(in number Vmax, in string side, in string accel
   
   distback = 0
   ' resetam contoarele motoarelor + resetam senzorii
-  Sensor.SetMode(1, 0)
-  Sensor.SetMode(2, 0)
+  If colour = "white" Or colour = "black" Then
+    Sensor.SetMode(1, 4)
+    Sensor.SetMode(2, 4)
+  Else
+    Sensor.SetMode(1, 0)
+    Sensor.SetMode(2, 0)
+  EndIf
   red = 0
   green = 0
   blue = 0
@@ -870,28 +875,44 @@ Function Move_Sync_Wall_To_Color(in number Vmax, in string side, in string accel
       
     EndIf
     
-    'exit condition
-    Citire_Culoare_HSV(1, outcol)
-    If colour =  "white" And outcol = 6 Then
-      exit_condition = 0
-    ElseIf colour =  "black" And outcol = 1 Then
-      exit_condition = 0
-    ElseIf colour =  "yellow" And outcol = 4 Then
-      exit_condition = 0
-    ElseIf colour =  "red" And outcol = 5 Then
-      exit_condition = 0
-    EndIf
+    'exit condition 
+    If colour = "white" Or colour = "black" Or colour = "blue" Then
+      
+      Sensor1.Raw3(red, green, blue)
+      If colour =  "white" And red > 150 And green > 150 Then
+        exit_condition = 0
+      ElseIf colour =  "black" And red < 35 And green < 35 And blue < 35 Then
+        exit_condition = 0
+      ElseIf colour = "blue" And red < 30 And green < 30 And blue > 30 Then
+        exit_condition = 0
+      EndIf
     
-    Citire_Culoare_HSV(2, outcol)
-    If colour =  "white" And outcol = 6 Then
-      exit_condition = 0
-    ElseIf colour =  "black" And outcol = 1 Then
-      exit_condition = 0
-    ElseIf colour =  "yellow" And outcol = 4 Then
-      exit_condition = 0
-    ElseIf colour =  "red" And outcol = 5 Then
-      exit_condition = 0
-    EndIf  
+      Sensor2.Raw3(red, green, blue)
+      If colour =  "white" And red > 150 And green > 150 Then
+        exit_condition = 0
+      ElseIf colour =  "black" And red < 35 And green < 35 And blue < 35 Then
+        exit_condition = 0
+      ElseIf colour = "blue" And red < 30 And green < 30 And blue > 30 Then
+        exit_condition = 0
+      EndIf
+      
+    Else
+      
+      If @alin_brown = 1 Then
+        s1 = Sensor.ReadPercent(1)
+        If colour = "brown" And s1 < 60 Then
+          exit_condition = 0
+        EndIf
+      EndIf
+      
+      If @alin_brown = 2 Then
+        s2 = Sensor.ReadPercent(2)
+        If colour = "brown" And s2 < 60 Then
+          exit_condition = 0
+        EndIf
+      EndIf  
+ 
+    EndIf
 
     
   EndWhile
@@ -1053,13 +1074,13 @@ Function Robot_Spin_Time (in string direction, in string end_brake)
   
   If @motor_type = "large" Then
     While Time.Get7() < @TimerRobotSpin
-      Motor.StartPower(@left_motor, sens * @Vcorner)
-      Motor.StartPower(@right_motor, -1 * sens * @Vcorner)
+      Motor.StartPower(@left_motor, sens * @Vcorner_slow)
+      Motor.StartPower(@right_motor, -1 * sens * @Vcorner_slow)
     EndWhile
   Else
     While Time.Get7() < @TimerRobotSpin
-      Motor.StartPower(@left_motor, -1 * sens * @Vcorner)
-      Motor.StartPower(@right_motor, -1 * sens * @Vcorner)
+      Motor.StartPower(@left_motor, -1 * sens * @Vcorner_slow)
+      Motor.StartPower(@right_motor, -1 * sens * @Vcorner_slow)
     EndWhile
   EndIf
   

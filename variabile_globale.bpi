@@ -115,10 +115,10 @@
 @timer_ki_rotation2black = 125
 
 ' AcceleratedEncoder - distanta (exprimate in grade de motor) pentru a accelera de la V0 la Vmax(50-150 in general)
-@AcceleratedEncoder = 70
+@AcceleratedEncoder = 90
 
 ' DeceleratedEncoder - distanta (exprimate in grade de motor) pentru a deccelera de la Vmax la V0(50-150 in general)
-@DeceleratedEncoder = 70
+@DeceleratedEncoder = 90
 
 '******************** Variabile folosite pentru brate, executie in thread ******************
 
@@ -141,7 +141,7 @@
 '''''''''''''''''''''''''''''
 ' durata maxima de executie a probei
 @max_execution_time = 120 'exprimat in secunde
-@aliniere_time = 800 ' durata maxima de executie pentru alinieri
+@aliniere_time = 1000 ' durata maxima de executie pentru alinieri
 @alinierep_time = 800 ' durata maxima de executie pentru alinierip
 @TimerRobotSpin = 500
 
@@ -187,6 +187,7 @@
 @aliniere_speed = -50
 @lf_2s_speedtransit = 95
 @Vcorner = 65
+@Vcorner_slow = 40
 
 
 '****************************************** Alte variabile *****************************************
