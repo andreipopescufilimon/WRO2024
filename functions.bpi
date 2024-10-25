@@ -1094,7 +1094,7 @@ EndFunction
 
 
 '******************************************************* rotation to black line function
-Function 2S_Rotation2Black_Line (in number grade, in string direction, in string end_brake)
+Function 2S_Rotation2Black_Line (in number grade, in string direction, in string end_brake, in string auto_alin)
   ' setam senzorii in modul Reflected Light si resetam contoarele motoarelor
   Sensor.SetMode(@left_sensor,0)
   Sensor.SetMode(@right_sensor,0)
@@ -1108,11 +1108,15 @@ Function 2S_Rotation2Black_Line (in number grade, in string direction, in string
   If direction = "stanga" Then
     sens = -1
     stop_port = @left_sensor
-    Move_Sync_Encoder(3, 70, "on", "on", "on")
+    If auto_alin = "on" Then
+      Move_Sync_Encoder(3, 70, "on", "on", "on")
+    EndIf
   Else
     sens = 1
     stop_port = @right_sensor
-    Move_Sync_Encoder(5, -70, "on", "on", "on")
+    If auto_alin = "on" Then
+      Move_Sync_Encoder(5, 70, "on", "on", "on")
+    EndIf
   EndIf
   
   ' facem o rotire mecanica sa asezam senzorii pe alb
@@ -1181,9 +1185,7 @@ Function 2S_Rotation2Black_Line_One_Wheel (in string direction, in string end_br
   Motor.ResetCount("BC")
   
   If direction = "dreapta" Then
-    While Math.ABS(Motor.GetCount("B")) < 450
-      Motor.StartPower("B", -60)
-    EndWhile
+    
     Speaker.Tone(100, 100, 100)
     While Sensor.ReadPercent(@left_sensor) > @black
       Motor.StartPower("B", -60)
@@ -1193,20 +1195,20 @@ Function 2S_Rotation2Black_Line_One_Wheel (in string direction, in string end_br
     While Math.ABS(Motor.GetCount("B")) < 20
       Motor.StartPower("B", -60)
     EndWhile
+    
   Else
-    While Math.ABS(Motor.GetCount("C")) < 450
-      Motor.StartPower("C", -60)
-    EndWhile
+    
     Speaker.Tone(100, 100, 100)
     While Sensor.ReadPercent(@left_sensor) > @black
-      Motor.StartPower("C", -60)
+      Motor.StartPower("C", 60)
     EndWhile
   
     Motor.ResetCount("C")
   
     While Math.ABS(Motor.GetCount("C")) < 20
-      Motor.StartPower("C", -60)
+      Motor.StartPower("C", 60)
     EndWhile
+    
   EndIf
   
   'we need to stop at precise moment

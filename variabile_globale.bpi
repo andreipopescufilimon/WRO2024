@@ -62,7 +62,7 @@
 
 '************************************** Variabile viteza - nav *************************************
 ' V0 - viteza de start a oricarui algoritm de line follower / move sync
-@V0 = 20
+@V0 = 25
 
 ' Vmax - viteza la care trebuie sa ajunga maxim algoritmul de line follower / move sync
 @Vmax = 95
@@ -71,7 +71,7 @@
 @Vcorner = 70
 
 ' Viteza de diferenta intre motoare pentru wall follow
-@speed_dif_wall = -6
+@speed_dif_wall = -4
 
 
 '************************************ Variabile de tip kp/ki/kd ************************************
@@ -79,7 +79,7 @@
 @kp_lf = 0.7
 
 ' kd_lf - valoarea optima de kd pentru algoritmul de line follower
-@kd_lf = 4.6
+@kd_lf = 3.6
 
 ' ki_lf - valoarea optima de kd pentru algoritmul de line follower
 @ki_lf = 0
@@ -115,10 +115,10 @@
 @timer_ki_rotation2black = 125
 
 ' AcceleratedEncoder - distanta (exprimate in grade de motor) pentru a accelera de la V0 la Vmax(50-150 in general)
-@AcceleratedEncoder = 90
+@AcceleratedEncoder = 70
 
 ' DeceleratedEncoder - distanta (exprimate in grade de motor) pentru a deccelera de la Vmax la V0(50-150 in general)
-@DeceleratedEncoder = 90
+@DeceleratedEncoder = 85
 
 '******************** Variabile folosite pentru brate, executie in thread ******************
 
@@ -141,8 +141,8 @@
 '''''''''''''''''''''''''''''
 ' durata maxima de executie a probei
 @max_execution_time = 120 'exprimat in secunde
-@aliniere_time = 1000 ' durata maxima de executie pentru alinieri
-@alinierep_time = 800 ' durata maxima de executie pentru alinierip
+@aliniere_time = 1300 ' durata maxima de executie pentru alinieri
+@alinierep_time = 1200 ' durata maxima de executie pentru alinierip
 @TimerRobotSpin = 500
 
 @debug = "off" ' debug 
