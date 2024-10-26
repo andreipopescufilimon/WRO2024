@@ -27,10 +27,10 @@ Sistem_Init()
 @move_sync_speed_luare_cuburi = 60
 @move_syncback_speed_luare_cuburi = -60
 @2s_turn2black_speed = 80
-@robot_spin_speed = 55
+@robot_spin_speed = 65
 @aliniere_speed = -40
 @lf_2s_speedtransit = 95
-@Vcorner = 65
+@Vcorner = 75
 @Vcorner_slow = 40
 
 
@@ -144,7 +144,7 @@ Gheara_Close()
 
 '' Iesire pe diagonala cu lasare turn 1 rosu
 Arc_Move(25, 40, "stanga", 40)
-Arc_Move(63.1, 0, "stanga", -40)
+Arc_Move(63, 0, "stanga", -40)
 Move_Sync_Encoder(58.7, @move_sync_speed, "on", "on", "on")
 Wait(0.2)
 Gheara_Open()
@@ -257,33 +257,29 @@ Move_Sync_Encoder(7, @move_syncback_speed, "on", "on", "on")
 2S_Rotation2Black_Line(10, "stanga", "on", "off")
 LF_2S_Encoder(@lf_2s_speed, 15, "on", "off", "off")
 LF_2S_Intersection(@lf_2s_speed_small, "off", "off", "off")
-Move_Sync_Encoder(1.5, @lf_2s_speed_small - 20, "off", "on", "on")
+Move_Sync_Encoder(1.5, @lf_2s_speed_small - 20, "off", "on", "off")
 '' End Iesire cu aliniere la cross
 
 
 '' Debriuri finale
-Move_Sync_Encoder(5, @move_syncback_speed, "on", "on", "on")
-Robot_Spin(90, "dreapta", @robot_spin_speed - 10, "on")
-Move_Sync_Encoder(38, @move_syncback_speed, "on", "on", "on")
+Move_Sync_Encoder(5, @move_syncback_speed_small, "on", "on", "on")
+Robot_Spin(91, "dreapta", @robot_spin_speed - 15, "on")
+Move_Sync_Encoder(36.5, @move_syncback_speed, "on", "on", "on")
 Lift_Semi()
 Wait(0.2)
 
-Arc_Move(88, 0, "stanga", 70)
+Arc_Move(85, 0, "stanga", 70)
 Lift_Down()
 Move_Sync_Encoder(17, @move_syncback_speed_small, "on", "on", "on")
 Lift_Semi()
 Wait(0.2)
+Move_Sync_Encoder(2, @move_syncback_speed_small, "on", "on", "on")
 '' End Debriuri Finale
 
-'' Apa 2
-Move_Sync_Encoder(13, @move_syncback_speed_small, "on", "on", "on")
-Robot_Spin_Time("dreapta", "on")
-Robot_Spin(3, "stanga", @robot_spin_speed, "on")
-Lift_Apa_Down()
-Wait(0.5)
-Lift_Semi()
-Wait(0.5)
-'' End Apa 2
+'' Transit to cuburi
+Move_Sync_Encoder(32, @move_sync_speed_small, "on", "on", "on")
+Arc_Move(180, 9, "dreapta", -60)
+'' End Transit to cuburi
 
   
 '*********()*************************************** end program principal
