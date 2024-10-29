@@ -598,7 +598,7 @@ Function Move_Sync_Encoder_Wall (in number encoder_cm, in number Vmax, in string
       If side = "left" Then 
         Motor_Right = Motor_Right + @speed_dif_wall
       Else
-        Motor_Left = Motor_Left + @speed_dif_wall
+        Motor_Left = Motor_Left - @speed_dif_wall
       EndIf
       
       Motor.StartPower(@left_motor, Motor_Left)
@@ -867,7 +867,7 @@ Function Move_Sync_Wall_To_Color(in number Vmax, in string side, in string accel
       If side = "left" Then 
         Motor_Right = Motor_Right + @speed_dif_wall
       Else
-        Motor_Left = Motor_Left + @speed_dif_wall
+        Motor_Left = Motor_Left - @speed_dif_wall
       EndIf
       
       Motor.StartPower(@left_motor, Motor_Left)
@@ -1653,3 +1653,38 @@ EndSub
 '***********************************************************************************************
 '*********************************** Functii WRO 2024 ******************************************
 '***********************************************************************************************
+Function citire_cub(out string col_cube)
+  
+  Sensor.SetMode(1, 4)
+  
+  red = 0 
+  green = 0
+  blue = 0
+  
+  cntB = 0
+  cntG = 0
+  
+  cnt_citiri = 0
+  
+  while cnt_citiri < 10
+    
+    Sensor1.Raw3(red, green, blue)
+    If blue > red And blue > green Then
+      cntB = cntB + 1
+    ElseIf green > red And green > blue Then
+      cntG = cntG + 1
+    EndIf
+    
+    cnt_citiri = cnt_citiri + 1
+    
+  EndWhile 
+  
+  
+  If cntB > cntG Then
+    col_cube = "Blue"
+    Speaker.Tone(100, 100, 500)
+  Else
+    col_cube = "Green"
+  EndIf
+  
+EndFunction

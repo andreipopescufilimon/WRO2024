@@ -71,7 +71,7 @@
 @Vcorner = 70
 
 ' Viteza de diferenta intre motoare pentru wall follow
-@speed_dif_wall = -4
+@speed_dif_wall = 4
 
 
 '************************************ Variabile de tip kp/ki/kd ************************************
@@ -118,7 +118,7 @@
 @AcceleratedEncoder = 70
 
 ' DeceleratedEncoder - distanta (exprimate in grade de motor) pentru a deccelera de la Vmax la V0(50-150 in general)
-@DeceleratedEncoder = 85
+@DeceleratedEncoder = 90
 
 '******************** Variabile folosite pentru brate, executie in thread ******************
 
@@ -240,3 +240,5 @@
 @start_poz = 1
 @stop_sound = 0
 @alin_brown = 1
+
+@caz_cub = "NAN"

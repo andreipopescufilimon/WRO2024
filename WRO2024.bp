@@ -42,6 +42,54 @@ Sistem_Init()
 '******************************** Programul principal ******************************************
 
 
+
+'' Luare cub 3 custom
+Gheara_Close()
+@alin_brown = 2
+@speed_dif_wall = 10
+Move_Sync_Wall_To_Color(70, "left", "on", "on", "brown")
+
+Lift_Semi_2_Cub_Up()
+Move_Sync_Encoder_Wall(21, @move_sync_speed_luare_cuburi, "left", "on", "on", "on")
+@speed_dif_wall = 4
+Wait(0.2)
+Lift_Semi_2_Cub_Limit()
+Gheara_Semi2()
+Lift_Semi_2_Cub_Luare()
+Gheara_Close()
+Lift_Semi_2_Cub_Up()
+'' End Luare cub 3 custom
+
+
+'' Transit to cub 4 custom
+Arc_Move(45, 0, "dreapta", -70)
+Move_Sync_Encoder(7, @move_syncback_speed_small, "on", "on", "on")
+Arc_Move(44, 0, "stanga", 70)
+'' End Transit to cub 4 custom
+
+
+'' Citire
+Move_Sync_Encoder(13.5, @move_sync_speed_small, "on", "on", "on")
+'Arc_Move(35, 0, "dreapta", 70)
+'citire_cub(@caz_cub)
+'Arc_Move(35, 0, "dreapta", -70)
+'' End Citire
+
+
+'' Luare cub 4 custom
+Move_Sync_Encoder(3.4, @move_sync_speed_small, "on", "on", "on")
+Wait(0.2)
+Lift_Semi_2_Cub_Limit()
+Gheara_Semi2()
+Lift_Semi_2_Cub_Luare()
+Gheara_Close()
+Lift_Semi_2_Cub_Up()
+'' End luare cub 4 custom
+
+
+
+wait_until_press()
+
 '' Debris 1 & 2
 Move_Sync_Encoder(69, @move_syncback_speed, "on", "on", "on")
 Gheara_Close_No_Wait()
@@ -108,7 +156,7 @@ Arc_Move(72, 0, "stanga", -50)
 
 Move_Sync_Encoder(110, @move_sync_speed, "on", "on", "on")
 
-Robot_Spin(140, "dreapta", @robot_spin_speed, "on")
+Robot_Spin(140, "dreapta", @robot_spin_speed + 15, "on")
 Move_Sync_Encoder(6, @move_syncback_speed, "on", "on", "on")
 aliniere("backward", @aliniere_speed)
 '' End Transit pe diagonala
@@ -143,16 +191,26 @@ Gheara_Close()
 
 
 '' Iesire pe diagonala cu lasare turn 1 rosu
-Arc_Move(25, 40, "stanga", 40)
-Arc_Move(63.3, 0, "stanga", -40)
-Move_Sync_Encoder(58.7, @move_sync_speed, "on", "on", "on")
+Move_Sync_Encoder(7, @move_syncback_speed, "on", "on", "on")
+Arc_Move(25, 40, "stanga", 50)
+Arc_Move(110, 0, "stanga", -50)
+aliniere("backward", @aliniere_speed)
+Arc_Move(90, 5, "dreapta", 90)
+
+LF_2S_Encoder(@lf_2s_speed, 10, "on", "off", "off")
+LF_2S_Intersection(@lf_2s_speed_small, "off", "off", "off")
+Move_Sync_Encoder(1, @lf_2s_speed_small, "off", "on", "on")
+
+Arc_Move(52.9, 0, "dreapta", -50)
+Move_Sync_Encoder(35.5, @move_sync_speed, "on", "on", "on")
 Wait(0.2)
 Gheara_Open()
 '' End Iesire pe diagonala cu lasare turn 1 rosu
 
 
 '' Back to galbene
-Move_Sync_Encoder(54, @move_syncback_speed, "on", "on", "on")
+Arc_Move(13, 0, "stanga", 80)
+Move_Sync_Encoder(47.5, @move_syncback_speed, "on", "on", "on")
 Gheara_Semi()
 Arc_Move(50, 1, "stanga", 50)
 '' End back to galbene
@@ -173,7 +231,7 @@ Gheara_Close()
 
 
 '' Iesire cu transit pt luare 2 galbene
-Move_Sync_Encoder(7, @move_syncback_speed, "on", "on", "on")
+Move_Sync_Encoder(8, @move_syncback_speed, "on", "on", "on")
 Arc_Move(25, 40, "stanga", 50)
 Arc_Move(110, 0, "stanga", -50)
 aliniere("backward", @aliniere_speed)
@@ -281,14 +339,36 @@ Arc_Move(180, 9, "dreapta", -70)
 
 '' Luare cub 3 custom
 @alin_brown = 2
+@speed_dif_wall = 10
 Move_Sync_Wall_To_Color(70, "left", "on", "on", "brown")
 
-Lift_Up()
-Move_Sync_Encoder_Wall(19.4, @move_sync_speed_luare_cuburi, "left", "on", "on", "on")
+Lift_Semi_2_Cub_Up()
+Move_Sync_Encoder_Wall(21, @move_sync_speed_luare_cuburi, "left", "on", "on", "on")
+@speed_dif_wall = 4
+Wait(0.2)
+Lift_Semi_2_Cub_Limit()
+Gheara_Semi2()
+Lift_Semi_2_Cub_Luare()
+Gheara_Close()
+Lift_Semi_2_Cub_Up()
 '' End Luare cub 3 custom
 
+
+'' Transit to cub 4 custom
+Arc_Move(45, 0, "dreapta", -70)
+Move_Sync_Encoder(7, @move_syncback_speed_small, "on", "on", "on")
+Arc_Move(44, 0, "stanga", 70)
+'' End Transit to cub 4 custom
+
+
+'' Citire
+Move_Sync_Encoder(14, @move_sync_speed, "on", "on", "on")
+Arc_Move(35, 0, "dreapta", 70)
+citire_cub(@caz_cub)
+'' End Citire
+
   
-'*********()*************************************** end program principal
+'************************************************ end program principal
 '************************************************ afisare timp de rulare
 'Time
 LCD.Clear()
