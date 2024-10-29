@@ -79,7 +79,7 @@
 @kp_lf = 0.7
 
 ' kd_lf - valoarea optima de kd pentru algoritmul de line follower
-@kd_lf = 3.6
+@kd_lf = 3.2
 
 ' ki_lf - valoarea optima de kd pentru algoritmul de line follower
 @ki_lf = 0

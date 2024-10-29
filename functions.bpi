@@ -1109,7 +1109,7 @@ Function 2S_Rotation2Black_Line (in number grade, in string direction, in string
     sens = -1
     stop_port = @left_sensor
     If auto_alin = "on" Then
-      Move_Sync_Encoder(3, 70, "on", "on", "on")
+      Move_Sync_Encoder(11, 70, "on", "on", "on")
     EndIf
   Else
     sens = 1
@@ -1524,7 +1524,6 @@ Function Citire_Culoare_HSV (in number port, out number col)
   red = 0
   green = 0
   blue = 0
-  port = 3
   
   If port = 1 Then
     Sensor1.Raw3(red, green, blue)
@@ -1604,6 +1603,7 @@ Function Citire_Culoare_HSV (in number port, out number col)
   EndIf
   
   If @debug = "on" Then
+    LCD.Clear()
     LCD.Write(20, 20, "r=" + @r)
     LCD.Write(20, 40, "g=" + @g)
     LCD.Write(20, 60, "b=" + @b)
@@ -1657,21 +1657,18 @@ Function citire_cub(out string col_cube)
   
   Sensor.SetMode(1, 4)
   
-  red = 0 
-  green = 0
-  blue = 0
+  val = 0
   
+  cnt_citiri = 0
   cntB = 0
   cntG = 0
   
-  cnt_citiri = 0
-  
   while cnt_citiri < 10
     
-    Sensor1.Raw3(red, green, blue)
-    If blue > red And blue > green Then
+    Citire_Culoare_HSV(1, val)
+    If val = 2 Then
       cntB = cntB + 1
-    ElseIf green > red And green > blue Then
+    ElseIf val = 3 Or val = 1 Then
       cntG = cntG + 1
     EndIf
     
@@ -1679,10 +1676,8 @@ Function citire_cub(out string col_cube)
     
   EndWhile 
   
-  
   If cntB > cntG Then
     col_cube = "Blue"
-    Speaker.Tone(100, 100, 500)
   Else
     col_cube = "Green"
   EndIf
