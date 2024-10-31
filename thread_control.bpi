@@ -32,7 +32,7 @@ EndSub
 Sub Lift_Semi
   
   @DeltaA = 300
-  Wait(0.3)
+  Wait(0.2)
 
 EndSub
 
@@ -47,7 +47,7 @@ EndSub
 Sub Lift_Semi_1_Cub_Up
   
   @DeltaA = 370
-  Wait(0.4)
+  Wait(0.3)
 
 EndSub
 
@@ -63,7 +63,7 @@ EndSub
 Sub Lift_Semi_2_Cub_Up
   
   @DeltaA = 600
-  Wait(0.5)
+  Wait(0.4)
 
 EndSub
 

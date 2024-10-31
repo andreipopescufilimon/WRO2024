@@ -27,7 +27,7 @@
 
 ' wheel_distance - distanta (exprimata in cm) dintre cele doua roti.
 '  se masoara de la exteriorul unei roti pana la interiorul rotii paralele
-@wheel_distance = 17.2
+@wheel_distance = 17.8
 
 ' wheel_ax_sensor_ax_distance - distanta (exprimata in cm) de la axul rotilor pana la mijlocul senzorilor
 @wheel_ax_sensor_ax_distance = 8.2
@@ -79,7 +79,7 @@
 @kp_lf = 0.7
 
 ' kd_lf - valoarea optima de kd pentru algoritmul de line follower
-@kd_lf = 3.6
+@kd_lf = 4
 
 ' ki_lf - valoarea optima de kd pentru algoritmul de line follower
 @ki_lf = 0
