@@ -77,7 +77,7 @@ EndSub
 
 Sub Lift_Semi_2_Cub_Luare
   
-  @DeltaA = 190
+  @DeltaA = 180
   Wait(0.4)
 
 EndSub
@@ -121,7 +121,7 @@ EndSub
 
 Sub Gheara_Semi2
   
-  @DeltaD = 110
+  @DeltaD = 112
   Wait(0.3)
 
 EndSub

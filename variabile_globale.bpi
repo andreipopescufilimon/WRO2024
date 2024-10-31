@@ -57,7 +57,7 @@
 ' grey - valoarea intersectiei de culoare alb-negru
 @grey = 30
 @greyt = 30
-@greycitire1s = 40
+@greycitire1s = 30
 
 
 '************************************** Variabile viteza - nav *************************************
@@ -79,16 +79,16 @@
 @kp_lf = 0.7
 
 ' kd_lf - valoarea optima de kd pentru algoritmul de line follower
-@kd_lf = 3.2
+@kd_lf = 3.6
 
 ' ki_lf - valoarea optima de kd pentru algoritmul de line follower
 @ki_lf = 0
 
 ' kp_lf - valoarea optima de kp pentru algoritmul de line follower
-@kp_1lf = 1
+@kp_1lf = 1.4
 
 ' kd_lf - valoarea optima de kd pentru algoritmul de line follower
-@kd_1lf = 4
+@kd_1lf = 5.2
 
 ' kp_move_sync - valoarea optima de kp pentru algoritmul de move_sync
 @kp_move_sync = 2.1
@@ -118,7 +118,7 @@
 @AcceleratedEncoder = 70
 
 ' DeceleratedEncoder - distanta (exprimate in grade de motor) pentru a deccelera de la Vmax la V0(50-150 in general)
-@DeceleratedEncoder = 90
+@DeceleratedEncoder = 75
 
 '******************** Variabile folosite pentru brate, executie in thread ******************
 
