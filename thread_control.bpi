@@ -55,7 +55,7 @@ EndSub
 Sub Lift_Semi_1_Cub_Limit
   
   @DeltaA = 290
-  Wait(0.3)
+  Wait(0.35)
 
 EndSub
 
@@ -122,7 +122,7 @@ EndSub
 Sub Gheara_Semi
   
   @DeltaD = 100
-  Wait(0.3)
+  Wait(0.2)
 
 EndSub
 

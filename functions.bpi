@@ -435,11 +435,11 @@ Function Move_Sync_Encoder (in number encoder_cm, in number Vmax, in string acce
     ' algoritm deceleratie
     If deceleration = "on" Then
       If encoder - CurrentEncoder < @DeceleratedEncoder Then 'we must get the last part of the encoder run
-        V = ( (encoder - CurrentEncoder) / @DeceleratedEncoder ) * ( Vmax - @V0 * sens ) + @V0 * sens
+        V = ( (encoder - CurrentEncoder) / @DeceleratedEncoder ) * ( Vmax - @V0_decel * sens ) + @V0_decel * sens
         V = Math.Abs( V ) * sens 'corectie pentru a fi siguri ca nu dam cu spatele
         
         ' daca viteza calculata depaseste viteza minima, vom folosi viteza minima
-        If Math.Abs( V ) < Math.Abs( @V0 * sens ) Then
+        If Math.Abs( V ) < Math.Abs( @V0_decel * sens ) Then
           V = @V0 * sens
         EndIf
         
@@ -541,7 +541,7 @@ Function Move_Sync_Encoder_Wall (in number encoder_cm, in number Vmax, in string
     
     ' algoritm acceleratie
     If acceleration = "on" Then
-      V = ( CurrentEncoder / @AcceleratedEncoder ) * ( Vmax - @V0 * sens ) + @V0 * sens
+      V = ( CurrentEncoder / @AcceleratedEncoder ) * ( Vmax - @V0_decel * sens ) + @V0_decel * sens
       V = Math.Abs( V ) * sens 'corectie pentru a fi siguri ca nu dam cu spatele
       
       ' daca viteza calculata depaseste viteza maxima, vom folosi viteza maxima

@@ -49,10 +49,10 @@
 
 '********************************* Valorile culorilor de pe plansa *********************************
 ' black - valoarea culorii negre de pe plansa
-@black = 15
+@black = 13
 
 ' white - valoarea culorii albe de pe plansa
-@white = 85
+@white = 80
 
 ' grey - valoarea intersectiei de culoare alb-negru
 @grey = 30
@@ -62,7 +62,8 @@
 
 '************************************** Variabile viteza - nav *************************************
 ' V0 - viteza de start a oricarui algoritm de line follower / move sync
-@V0 = 25
+@V0 = 40
+@V0_decel = 10
 
 ' Vmax - viteza la care trebuie sa ajunga maxim algoritmul de line follower / move sync
 @Vmax = 95
@@ -71,7 +72,7 @@
 @Vcorner = 70
 
 ' Viteza de diferenta intre motoare pentru wall follow
-@speed_dif_wall = 4
+@speed_dif_wall = 6
 
 
 '************************************ Variabile de tip kp/ki/kd ************************************
@@ -91,10 +92,10 @@
 @kd_1lf = 5.2
 
 ' kp_move_sync - valoarea optima de kp pentru algoritmul de move_sync
-@kp_move_sync = 2.1
+@kp_move_sync = 2.2
 
 ' kd_move_sync - valoarea optima de kd pentru algoritmul de move_sync
-@kd_move_sync = 1.1
+@kd_move_sync = 1
 
 ' kp_move_sync - valoarea optima de kp pentru algoritmul de move_sync
 @kp_move_sync_vir = 2.9
@@ -115,7 +116,7 @@
 @timer_ki_rotation2black = 125
 
 ' AcceleratedEncoder - distanta (exprimate in grade de motor) pentru a accelera de la V0 la Vmax(50-150 in general)
-@AcceleratedEncoder = 70
+@AcceleratedEncoder = 65
 
 ' DeceleratedEncoder - distanta (exprimate in grade de motor) pentru a deccelera de la Vmax la V0(50-150 in general)
 @DeceleratedEncoder = 75
