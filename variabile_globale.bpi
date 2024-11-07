@@ -128,7 +128,7 @@
 
 '' coeficienti lift
 @kpLift = 3
-@kdLift = 17
+@kdLift = 17.5
 @kdLift_copy = @kdLift
 
 ' diferenta de unghi. Intotdeauna pornim de la 0

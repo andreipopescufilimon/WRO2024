@@ -1680,8 +1680,10 @@ Function citire_cub(out string col_cube)
   
   If cntB > cntG Then
     col_cube = "Blue"
+    Speaker.Tone(100, 2000, 300)
   Else
     col_cube = "Green"
   EndIf
+
   
 EndFunction
