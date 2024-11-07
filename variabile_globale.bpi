@@ -116,10 +116,10 @@
 @timer_ki_rotation2black = 125
 
 ' AcceleratedEncoder - distanta (exprimate in grade de motor) pentru a accelera de la V0 la Vmax(50-150 in general)
-@AcceleratedEncoder = 65
+@AcceleratedEncoder = 60
 
 ' DeceleratedEncoder - distanta (exprimate in grade de motor) pentru a deccelera de la Vmax la V0(50-150 in general)
-@DeceleratedEncoder = 75
+@DeceleratedEncoder = 70
 
 '******************** Variabile folosite pentru brate, executie in thread ******************
 

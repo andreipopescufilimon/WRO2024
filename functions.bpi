@@ -1136,7 +1136,7 @@ Function 2S_Rotation2Black_Line (in number grade, in string direction, in string
       Motor.StartPower(@right_motor, -1 * sens * @Vcorner)
     EndWhile
   EndIf
-  Speaker.Tone(100, 2000, 300)
+  'Speaker.Tone(100, 2000, 300)
   
   ' controller PID bazat pe timp pentru aliniere precisa
   Time.Reset7() ' resetam cronometrul pentru a aplica PID doar pe o durata clara de timp
@@ -1680,7 +1680,7 @@ Function citire_cub(out string col_cube)
   
   If cntB > cntG Then
     col_cube = "Blue"
-    Speaker.Tone(100, 2000, 300)
+    'Speaker.Tone(100, 2000, 300)
   Else
     col_cube = "Green"
   EndIf

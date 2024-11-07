@@ -49,7 +49,7 @@ Lift_Semi()
 Wait(0.5)
 Move_Sync_Encoder(1, @move_syncback_speed, "on", "on", "on")
 Arc_Move(21, 0, "dreapta", 70)
-Move_Sync_Encoder(54.5, @move_sync_speed, "on", "on", "on")
+Move_Sync_Encoder(55, @move_sync_speed, "on", "on", "on")
 '' End Debris 1 & 2
 
 
@@ -104,10 +104,10 @@ Gheara_Close()
 Arc_Move(25, 35, "stanga", 50)
 Arc_Move(72, 0, "stanga", -50)
 
-Move_Sync_Encoder(110, @move_sync_speed, "on", "on", "on")
+Move_Sync_Encoder(109, @move_sync_speed, "on", "on", "on")
 
 Robot_Spin(140, "dreapta", @robot_spin_speed + 15, "on")
-Move_Sync_Encoder(4, @move_syncback_speed, "on", "on", "on")
+Move_Sync_Encoder(2, @move_syncback_speed, "on", "on", "on")
 aliniere("backward", @aliniere_speed - 20)
 '' End Transit pe diagonala
 
@@ -116,7 +116,7 @@ aliniere("backward", @aliniere_speed - 20)
 Move_Sync_Encoder(11, @move_sync_speed, "on", "on", "on")
 Arc_Move(95, 0, "stanga", 80)
 
-Move_Sync_Encoder_Wall(17, 70, "right", "on", "off", "off")
+Move_Sync_Encoder_Wall(12, 70, "right", "on", "off", "off")
 @alin_brown = 2
 Move_Sync_Wall_To_Color(70, "right", "off", "on", "brown")
 Lift_Semi_1_Cub_Up()
@@ -132,7 +132,7 @@ Move_Sync_Encoder_Wall(0.8, @move_sync_speed_luare_cuburi, "right", "on", "on", 
 Gheara_Close()
 Lift_Semi_1_Cub_Up()
 
-Move_Sync_Encoder_Wall(9, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
+Move_Sync_Encoder_Wall(8, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
 Lift_Semi_1_Cub_Limit()
 Gheara_Semi()
 Lift_Down()
@@ -143,21 +143,22 @@ Gheara_Close()
 
 '' Iesire pe diagonala cu lasare turn 1 rosu
 Move_Sync_Encoder(7, @move_syncback_speed, "on", "on", "on")
-Arc_Move(25, 40, "stanga", 50)
-Arc_Move(110, 0, "stanga", -50)
+Arc_Move(25, 40, "stanga", 70)
+Arc_Move(110, 0, "stanga", -70)
 aliniere("backward", @aliniere_speed)
 Move_Sync_Encoder(12, @move_sync_speed, "on", "on", "on")
 2S_Rotation2Black_Line(90, "dreapta", "on", "off")
 
 LF_2S_Encoder(@lf_2s_speed, 15, "on", "off", "off")
 LF_2S_Intersection(@lf_2s_speed, "off", "on", "off")
-LF_2S_Encoder(@lf_2s_speed, 9, "off", "on", "on")
+LF_2S_Encoder(@lf_2s_speed, 8, "off", "on", "on")
 
 Arc_Move(90, 0, "stanga", -70)
 Move_Sync_Encoder(10, @move_sync_speed, "on", "on", "on")
 Wait(0.2)
 Gheara_Open()
 '' End Iesire pe diagonala cu lasare turn 1 rosu
+
 
 '' Back to galbene
 Move_Sync_Encoder(10, @move_syncback_speed, "on", "on", "on")
@@ -172,7 +173,7 @@ Gheara_Semi()
 
 
 '' Luare cuburi galbene
-Move_Sync_Encoder_Wall(14, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
+Move_Sync_Encoder_Wall(16, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
 Gheara_Close()
 Lift_Semi_1_Cub_Up()
 
@@ -186,7 +187,7 @@ Gheara_Close()
 
 
 '' Iesire cu transit pt luare 2 galbene
-Move_Sync_Encoder(19, @move_syncback_speed, "off", "on", "on")
+Move_Sync_Encoder(16, @move_syncback_speed, "off", "on", "on")
 Arc_Move(25, 40, "stanga", 50)
 Arc_Move(110, 0, "stanga", -50)
 aliniere("backward", @aliniere_speed)
@@ -197,13 +198,13 @@ Move_Sync_To_Color(@move_sync_speed, "off", "off", "white")
 
 LF_2S_Encoder(@lf_2s_speed, 5, "on", "off", "off")
 LF_2S_Intersection(@lf_2s_speed, "off", "off", "off")
-LF_2S_Encoder(@lf_2s_speed, 15, "off", "on", "on")
-Move_Sync_Encoder(25, @move_sync_speed, "on", "on", "on")
+LF_2S_Encoder(@lf_2s_speed, 15, "off", "off", "off")
+Move_Sync_Encoder(25, @move_sync_speed, "off", "on", "on")
 '' End Iesire cu transit pt luare 2 galbene
 
 
 '' Intrare pe zid
-Arc_Move(165, 2.2, "stanga", -60)
+Arc_Move(160, 2, "stanga", -60)
 @alin_brown = 2
 Move_Sync_Wall_To_Color(40, "right", "on", "on", "brown")
 '' End Intrare pe zid
@@ -259,7 +260,7 @@ Move_Sync_Wall_To_Color(70, "left", "off", "on", "brown")
 
 Lift_Semi_2_Cub_Up()
 Gheara_Semi2()
-Move_Sync_Encoder_Wall(20.5, @move_sync_speed_luare_cuburi, "left", "on", "on", "on")
+Move_Sync_Encoder_Wall(20, @move_sync_speed_luare_cuburi, "left", "on", "on", "on")
 @speed_dif_wall = 4
 Wait(0.2)
 Lift_Semi_2_Cub_Luare()
@@ -270,8 +271,8 @@ Lift_Semi_2_Cub_Up()
 
 '' Transit to cub 4 custom
 Arc_Move(44, 0, "dreapta", -60)
-Move_Sync_Encoder(6.1, @move_syncback_speed_small, "on", "on", "on")
-Arc_Move(43, 0, "stanga", 70)
+Move_Sync_Encoder(6.2, @move_syncback_speed_small, "on", "on", "on")
+Arc_Move(44, 0, "stanga", 70)
 '' End Transit to cub 4 custom
 
 
@@ -327,11 +328,12 @@ Move_Sync_To_Color(@move_sync_speed, "off", "off", "white")
 LF_2S_Encoder(@lf_2s_speed, 15, "on", "off", "off")
 LF_2S_Intersection(@lf_2s_speed, "off", "on", "on")
 Wait(0.2)
-Arc_Move(165, 2.3, "stanga", -70)
+Arc_Move(161, 2.2, "stanga", -70)
 '' End Transit to 2 custom
 
 
 '' Luare 2 custom
+@speed_dif_wall = 8
 Move_Sync_Encoder_Wall(12, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
 Lift_Semi_1_Cub_Up()
 Move_Sync_Encoder_Wall(9, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
@@ -352,7 +354,7 @@ Gheara_Close()
 
 
 '' Iesire zid + luare debris uri
-Arc_Move(40, 20, "stanga", 70)
+Arc_Move(40, 20, "stanga", 80)
 Move_Sync_Encoder(9, @move_syncback_speed, "on", "on", "on")
 2S_Rotation2Black_Line(20, "stanga", "on", "off")
 LF_2S_Encoder(@lf_2s_speed, 25, "on", "off", "off")
@@ -360,8 +362,8 @@ LF_2S_Intersection(@lf_2s_speed, "off", "off", "off")
 Move_Sync_Encoder(1, @move_sync_speed, "off", "on", "on")
 Wait(0.2)
 
-Arc_Move(95, 0, "stanga", 70)
-Move_Sync_Encoder(23, @move_syncback_speed, "on", "on", "on")
+Arc_Move(95, 0, "stanga", 80)
+Move_Sync_Encoder(22, @move_syncback_speed, "on", "on", "on")
 Lift_Semi()
 Wait(0.5)
 '' End Iesire zid + luare debris uri
@@ -395,10 +397,10 @@ Lift_Down()
 
 
 If culoare_cub = "Blue" Then
-  'Gheara_Close()
-  Move_Sync_Encoder(19, @move_sync_speed_small, "on", "on", "on")
-  'Wait(0.2)
-  'Gheara_Open()
+  Gheara_Close()
+  Move_Sync_Encoder(19, @move_sync_speed, "on", "on", "on")
+  Wait(0.2)
+  Gheara_Open()
   Move_Sync_Encoder(19, @move_syncback_speed, "on", "off", "off")
 EndIf
 
@@ -407,11 +409,11 @@ EndIf
 Move_Sync_Encoder(15, @move_syncback_speed, "on", "on", "on")
 Lift_Semi()
 Wait(0.5)
-Gheara_Close()
-Robot_Spin(150, "dreapta", @robot_spin_speed, "on")
-Move_Sync_Encoder(80, @move_syncback_speed, "on", "off", "off")
+Gheara_Close_No_Wait()
+Robot_Spin(140, "dreapta", @robot_spin_speed, "on")
+Move_Sync_Encoder(66, @move_syncback_speed, "on", "off", "off")
 Arc_Move(27, 0, "stanga", 95)
-Move_Sync_Encoder(55, @move_syncback_speed, "off", "off", "off")
+Move_Sync_Encoder(68, @move_syncback_speed, "off", "off", "off")
 '' End Transit final
 
 
