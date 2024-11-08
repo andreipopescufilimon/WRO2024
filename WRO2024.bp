@@ -24,8 +24,8 @@ Sistem_Init()
 @move_sync_speed_small = 70
 @move_syncback_speed = -95
 @move_syncback_speed_small = -70
-@move_sync_speed_luare_cuburi = 60
-@move_syncback_speed_luare_cuburi = -60
+@move_sync_speed_luare_cuburi = 50
+@move_syncback_speed_luare_cuburi = -50
 @2s_turn2black_speed = 80
 @robot_spin_speed = 55
 @aliniere_speed = -40
@@ -240,7 +240,7 @@ LF_2S_Intersection(@lf_2s_speed, "off", "off", "on")
 2S_Rotation2Black_Line(90, "stanga", "on", "on")
 LF_2S_Encoder(@lf_2s_speed, 50, "on", "off", "off")
 LF_2S_Intersection(@lf_2s_speed, "off", "off", "on")
-Robot_Spin(177, "stanga", 70, "on")
+Robot_Spin(175, "stanga", 70, "on")
 Move_Sync_Encoder(9, @move_sync_speed, "on", "on", "on")
 Wait(0.2)
 Gheara_Open()
@@ -411,7 +411,7 @@ Lift_Semi()
 Wait(0.5)
 Gheara_Close_No_Wait()
 Robot_Spin(140, "dreapta", @robot_spin_speed, "on")
-Move_Sync_Encoder(66, @move_syncback_speed, "on", "off", "off")
+Move_Sync_Encoder(63, @move_syncback_speed, "on", "off", "off")
 Arc_Move(27, 0, "stanga", 95)
 Move_Sync_Encoder(68, @move_syncback_speed, "off", "off", "off")
 '' End Transit final
