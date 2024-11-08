@@ -55,7 +55,7 @@ Move_Sync_Encoder(55, @move_sync_speed, "on", "on", "on")
 
 '' Apa 1
 Robot_Spin(95.5, "stanga", @robot_spin_speed, "on")
-Move_Sync_Encoder(46, @move_syncback_speed, "on", "on", "on")
+Move_Sync_Encoder(45, @move_syncback_speed, "on", "on", "on")
 Robot_Spin_Time("dreapta", "on")
 Lift_Apa_Down()
 Wait(0.2)
@@ -157,7 +157,7 @@ Arc_Move(90, 0, "stanga", -70)
 Move_Sync_Encoder(10, @move_sync_speed, "on", "on", "on")
 Wait(0.4)
 Gheara_Open()
-'' End Iesire pe diagonala cu lasare turn 1 rosu
+'' End Iesire pe diagonala cu lasare turn 1 ros u
 
 
 '' Back to galbene
@@ -231,11 +231,11 @@ Gheara_Close()
 
 '' Iesire cu lasare turn 2 galben
 Move_Sync_Encoder(5.5, @move_syncback_speed, "on", "on", "on")
-Arc_Move(40, 20, "stanga", 40)
+Arc_Move(40, 20, "stanga", 60)
 Move_Sync_Encoder(12.5, @move_syncback_speed, "on", "on", "on")
 2S_Rotation2Black_Line(10, "stanga", "on", "off")
 
-LF_2S_Encoder(@lf_2s_speed, 12, "on", "off", "off")
+LF_2S_Encoder(@lf_2s_speed, 7, "on", "off", "off")
 LF_2S_Intersection(@lf_2s_speed, "off", "off", "on")
 2S_Rotation2Black_Line(90, "stanga", "on", "on")
 LF_2S_Encoder(@lf_2s_speed, 50, "on", "off", "off")
@@ -291,7 +291,7 @@ Lift_Semi_2_Cub_Up()
 
 '' Luare Debris
 Move_Sync_Encoder(8.6, @move_syncback_speed, "on", "on", "on")
-Lift_Down()
+Lift_Down_No_Wait()
 Arc_Move(197, 4, "dreapta", -60)
 Move_Sync_Encoder(9, @move_syncback_speed, "on", "on", "on")
 Lift_Semi()
@@ -370,7 +370,7 @@ Wait(0.5)
 
 
 '' Lasare turn custom
-Move_Sync_Encoder(2.2, @move_sync_speed, "on", "on", "on")
+Move_Sync_Encoder(1, @move_sync_speed, "on", "on", "on")
 Robot_Spin(85, "dreapta", @robot_spin_speed, "on")
 Lift_Down()
 Move_Sync_Encoder(2, @move_sync_speed, "on", "on", "on")
@@ -411,8 +411,8 @@ Lift_Semi()
 Wait(0.5)
 Gheara_Close_No_Wait()
 Robot_Spin(140, "dreapta", @robot_spin_speed, "on")
-Move_Sync_Encoder(60, -100, "off", "off", "off")
-Arc_Move(34, 0, "stanga", 100)
+Move_Sync_Encoder(59, -100, "off", "off", "off")
+Arc_Move(35, 0, "stanga", 100)
 Lift_Down_No_Wait()
 Move_Sync_Encoder(75, -100, "off", "off", "off")
 '' End Transit final
