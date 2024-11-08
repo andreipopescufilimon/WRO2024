@@ -1,0 +1,312 @@
+' WRO2024 ~ Nerdvana Taurus
+'**************************************** Include **********************************************
+include "variabile_globale"
+include "functions"
+include "thread_control"
+'********************************************* end include
+
+'********************************** Setarea cronometre *****************************************
+Motor.ResetCount(@stop_string)
+Time.Reset8() ' cronometru care tine timpul de executie al programului. Va fi afisat la final.
+'********************************************* end setare cronometre
+
+'******************************* Start setare Thread *******************************************
+Thread.Run = Thread_Sub
+Sistem_Init()
+'******************************** End setare Thread  *******************************************
+
+
+@lf_2s_speed = 95
+@lf_2s_speed_small = 75
+@lf_1s_speed = 80
+@lf_1s_read_speed = 80
+@move_sync_speed = 95
+@move_sync_speed_small = 70
+@move_syncback_speed = -95
+@move_syncback_speed_small = -70
+@move_sync_speed_luare_cuburi = 50
+@move_syncback_speed_luare_cuburi = -50
+@2s_turn2black_speed = 80
+@robot_spin_speed = 60
+@aliniere_speed = -40
+@lf_2s_speedtransit = 95
+@Vcorner = 75
+@Vcorner_slow = 35
+
+
+
+@start_poz = 1
+
+'******************************** End setare viteze  *******************************************
+'***********************************************************************************************
+'******************************** Programul principal ******************************************
+
+
+'' Intrare pe zid 1
+Gheara_Semi_No_Wait()
+aliniere("backward", @aliniere_speed - 20)
+Move_Sync_Encoder(11, @move_sync_speed, "on", "on", "on")
+Arc_Move(95, 0, "stanga", 80)
+
+Move_Sync_Encoder_Wall(12, 70, "right", "on", "off", "off")
+@alin_brown = 2
+Move_Sync_Wall_To_Color(70, "right", "off", "on", "brown")
+'' End Intrare pe zid 1
+
+
+'' Luare doua cuburi rosii
+Move_Sync_Encoder_Wall(8.8, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
+Gheara_Close()
+Lift_Semi_1_Cub_Up()
+
+Move_Sync_Encoder_Wall(8, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
+Lift_Semi_1_Cub_Limit()
+Gheara_Semi()
+Lift_Down()
+Move_Sync_Encoder_Wall(1, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
+Gheara_Close()
+'' End Luare doua cuburi rosii
+
+
+
+'' Transit pe diagonala
+Arc_Move(25, 35, "stanga", 60)
+Arc_Move(72, 0, "stanga", -60)
+
+Move_Sync_Encoder(109, @move_sync_speed, "on", "on", "on")
+
+Robot_Spin(140, "dreapta", @robot_spin_speed + 15, "on")
+Move_Sync_Encoder(2, @move_syncback_speed, "on", "on", "on")
+aliniere("backward", @aliniere_speed - 20)
+'' End Transit pe diagonala
+
+
+'' Intrare pe zid 2
+Move_Sync_Encoder(11, @move_sync_speed, "on", "on", "on")
+Arc_Move(95, 0, "stanga", 80)
+
+Move_Sync_Encoder_Wall(12, 70, "right", "on", "off", "off")
+@alin_brown = 2
+Move_Sync_Wall_To_Color(70, "right", "off", "on", "brown")
+Lift_Semi_1_Cub_Up()
+'' End Intrare pe zid 2
+
+
+'' Luare doua cuburi rosii
+Move_Sync_Encoder_Wall(8, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
+Lift_Semi_1_Cub_Limit()
+Gheara_Semi()
+Lift_Down()
+Move_Sync_Encoder_Wall(0.8, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
+Gheara_Close()
+Lift_Semi_1_Cub_Up()
+
+Move_Sync_Encoder_Wall(8, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
+Lift_Semi_1_Cub_Limit()
+Gheara_Semi()
+Lift_Down()
+Move_Sync_Encoder_Wall(1, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
+Gheara_Close()
+'' End Luare doua cuburi rosii
+
+
+'' Iesire cu arc si lasare turn rosu
+Move_Sync_Encoder(6, @move_syncback_speed, "on", "on", "on")
+Arc_Move(38, 25, "stanga", 80)
+Arc_Move(128, 0, "stanga", -80)
+
+Move_Sync_Encoder(19.4, @move_sync_speed, "on", "on", "on")
+Wait(0.2)
+Gheara_Semi()
+Move_Sync_Encoder(14, @move_syncback_speed, "on", "on", "on")
+Arc_Move(100, 6.3, "stanga", 80)
+'' End Iesire cu arc si lasare turn rosu
+
+
+'' Intrare pe zid 2
+@alin_brown = 2
+Move_Sync_Wall_To_Color(70, "right", "off", "on", "brown")
+'' End Intrare pe zid 2
+
+
+'' Luare doua cuburi gabene
+Move_Sync_Encoder_Wall(29, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
+Gheara_Close()
+Lift_Semi_1_Cub_Up()
+
+Move_Sync_Encoder_Wall(8, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
+Lift_Semi_1_Cub_Limit()
+Gheara_Semi()
+Lift_Down()
+Move_Sync_Encoder_Wall(5, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
+Gheara_Close()
+'' End Luare doua cuburi gabene
+
+
+'' Iesire cu transit pt luare 2 galbene
+Move_Sync_Encoder(9, @move_sync_speed, "on", "on", "on")
+Arc_Move(25, 40, "stanga", 50)
+Arc_Move(114, 0, "stanga", -50)
+
+Move_Sync_Encoder(53, @move_sync_speed, "on", "off", "off")
+Move_Sync_To_Color(@move_sync_speed, "off", "off", "white")
+2S_Rotation2Black_Line(70, "dreapta", "on", "on")
+
+LF_2S_Encoder(@lf_2s_speed, 10, "on", "off", "off")
+Move_Sync_Encoder(20, @move_sync_speed, "off", "on", "on")
+'' End Iesire cu transit pt luare 2 galbene pe dea dreptu
+
+
+'' Intrare pe zid
+Arc_Move(160, 2, "stanga", -60)
+@alin_brown = 2
+Move_Sync_Wall_To_Color(40, "right", "on", "on", "brown")
+'' End Intrare pe zid
+
+
+'' Luare finala cuburi galbene
+Lift_Semi_1_Cub_Up()
+Move_Sync_Encoder_Wall(28.5, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
+Lift_Semi_1_Cub_Limit()
+Gheara_Semi()
+Lift_Down()
+Move_Sync_Encoder_Wall(0.8, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
+Gheara_Close()
+Lift_Semi_1_Cub_Up()
+
+Move_Sync_Encoder_Wall(9.2, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
+Lift_Semi_1_Cub_Limit()
+Gheara_Semi()
+Lift_Down()
+Move_Sync_Encoder_Wall(0.8, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
+Gheara_Close()
+'' End Luare finala cuburi galbene
+
+
+'' Iesire cu lasare turn 2 galben
+Arc_Move(40, 20, "stanga", 60)
+Move_Sync_Encoder(12.5, @move_syncback_speed, "on", "on", "on")
+2S_Rotation2Black_Line(10, "stanga", "on", "off")
+
+LF_2S_Encoder(@lf_2s_speed, 8, "on", "off", "off")
+LF_2S_Intersection(@lf_2s_speed, "off", "off", "on")
+
+Arc_Move(93, 0, "stanga", -80)
+
+Move_Sync_Encoder(10.5, @move_sync_speed, "on", "on", "on")
+Wait(0.4)
+Gheara_Open()
+'' End Iesire cu lasare turn 2 galben
+
+
+'' Intrare pe zid
+Move_Sync_Encoder(10.5, @move_syncback_speed, "on", "on", "on")
+Robot_Spin(133, "stanga", @robot_spin_speed, "on")
+Arc_Move(43, 55, "dreapta", 80)
+'' End Intrare pe zid
+
+
+
+'' Luare cub 3 custom
+@speed_dif_wall = 15
+Move_Sync_Encoder_Wall(15, 90, "left", "on", "off", "off")
+@alin_brown = 2
+Move_Sync_Wall_To_Color(70, "left", "off", "on", "brown")
+
+Lift_Semi_2_Cub_Up()
+Gheara_Semi2()
+Move_Sync_Encoder_Wall(20, @move_sync_speed_luare_cuburi, "left", "on", "on", "on")
+@speed_dif_wall = 4
+Wait(0.2)
+Lift_Semi_2_Cub_Luare()
+Gheara_Close()
+Lift_Semi_2_Cub_Up()
+'' End Luare cub 3 custom
+
+
+'' Transit to cub 4 custom
+Arc_Move(44, 0, "dreapta", -60)
+Move_Sync_Encoder(6.2, @move_syncback_speed_small, "on", "on", "on")
+Arc_Move(44, 0, "stanga", 70)
+'' End Transit to cub 4 custom
+
+
+Move_Sync_Encoder(16, @move_sync_speed_small, "on", "on", "on")
+Wait(0.5)
+
+
+'' Luare cub 4 custom
+Lift_Semi_2_Cub_Limit()
+Gheara_Semi()
+Lift_Semi_2_Cub_Luare()
+Gheara_Close()
+Lift_Semi_2_Cub_Up()
+'' End luare cub 4 custom
+
+
+'' Luare Debris
+Move_Sync_Encoder(8.6, @move_syncback_speed, "on", "on", "on")
+Lift_Down_No_Wait()
+Arc_Move(197, 4, "dreapta", -60)
+Move_Sync_Encoder(9, @move_syncback_speed, "on", "on", "on")
+Lift_Semi()
+Wait(0.3)
+'' End luare debris
+
+
+'' Apa 2
+Move_Sync_Encoder(7, @move_syncback_speed, "on", "on", "on")
+Robot_Spin_Time("dreapta", "on")
+Lift_Apa_Down()
+Wait(0.5)
+Robot_Spin(1, "stanga", @robot_spin_speed, "on")
+Lift_Semi()
+Wait(0.5)
+Robot_Spin(10, "stanga", @robot_spin_speed - 10, "on")
+Robot_Spin(5, "dreapta", @robot_spin_speed - 10, "on")
+'' End Apa 2
+
+
+'' Lasare intermediara debris uri
+Move_Sync_Encoder(14, @move_sync_speed, "on", "on", "on")
+Arc_Move(105, 10, "dreapta", 80)
+Lift_Down()
+'' End Lasare intermediara debris uri
+
+
+'' Transit to 2 custom
+Move_Sync_Encoder(20, @move_syncback_speed_small, "on", "on", "on")
+
+Move_Sync_Encoder(15, @move_sync_speed_small, "on", "on", "on")
+Arc_Move(100, 0, "stanga", -90)
+@alin_brown = 2
+Move_Sync_Wall_To_Color(70, "right", "off", "on", "brown")
+Lift_Semi_1_Cub_Up()
+'' End Transit to 2 custom
+
+
+'' Luare finala
+Move_Sync_Encoder_Wall(48, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
+Gheara_Close()
+Lift_Semi_1_Cub_Up()
+
+Move_Sync_Encoder_Wall(10, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
+Lift_Semi_1_Cub_Limit() 
+Gheara_Semi()
+Lift_Down()
+Move_Sync_Encoder_Wall(1, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
+Gheara_Close()
+'' End Luare finala
+
+'************************************************ end program principal
+'************************************************ afisare timp de rulare
+'Time
+LCD.Clear()
+LCD.Write(7, 20, Time.Get8() / 1000)
+LCD.Update()
+
+Motor.Stop(@stop_string, "True")
+stop_sound = 1
+
+Program.Delay(20000)
+'************************************************** end program
