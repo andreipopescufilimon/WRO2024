@@ -63,7 +63,7 @@
 '************************************** Variabile viteza - nav *************************************
 ' V0 - viteza de start a oricarui algoritm de line follower / move sync
 @V0 = 40
-@V0_decel = 10
+@V0_decel = 20
 
 ' Vmax - viteza la care trebuie sa ajunga maxim algoritmul de line follower / move sync
 @Vmax = 95
@@ -72,15 +72,15 @@
 @Vcorner = 70
 
 ' Viteza de diferenta intre motoare pentru wall follow
-@speed_dif_wall = 10
+@speed_dif_wall = 6
 
 
 '************************************ Variabile de tip kp/ki/kd ************************************
 ' kp_lf - valoarea optima de kp pentru algoritmul de line follower
-@kp_lf = 0.7
+@kp_lf = 0.6
 
 ' kd_lf - valoarea optima de kd pentru algoritmul de line follower
-@kd_lf = 4
+@kd_lf = 3.8
 
 ' ki_lf - valoarea optima de kd pentru algoritmul de line follower
 @ki_lf = 0
