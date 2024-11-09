@@ -49,7 +49,7 @@ Lift_Semi()
 Wait(0.5)
 Move_Sync_Encoder(1, @move_syncback_speed, "on", "on", "on")
 Arc_Move(21, 0, "dreapta", 70)
-Move_Sync_Encoder(55, @move_sync_speed, "on", "on", "on")
+Move_Sync_Encoder(54.7, @move_sync_speed, "on", "on", "on")
 '' End Debris 1 & 2
 
 
@@ -70,7 +70,7 @@ Lift_Down()
 '' End Lasare Debris
 
 '' Intrare pe zid
-Robot_Spin(75, "dreapta", @robot_spin_speed, "on")
+Robot_Spin(70, "dreapta", @robot_spin_speed, "on")
 Move_Sync_Encoder(27, @move_sync_speed, "on", "on", "on")
 Robot_Spin(89, "stanga", @robot_spin_speed, "on")
 Move_Sync_Encoder(4, @move_syncback_speed, "on", "off", "off")
@@ -167,7 +167,7 @@ LF_2S_Encoder(@lf_2s_speed, 5, "on", "off", "off")
 LF_2S_Intersection(@lf_2s_speed, "off", "on", "off")
 LF_2S_Encoder(@lf_2s_speed, 30, "off", "on", "on")
 Gheara_Close_No_Wait()
-Arc_Move(165, 2, "stanga", -70)
+Arc_Move(165, 1.8, "stanga", -90)
 Gheara_Semi()
 '' End back to galbene
 
@@ -325,7 +325,7 @@ Arc_Move(180, 4, "stanga", -80)
 Move_Sync_Encoder(33, @move_sync_speed, "on", "off", "off")
 Move_Sync_To_Color(@move_sync_speed, "off", "off", "white")
 2S_Rotation2Black_Line(70, "dreapta", "on", "on")
-LF_2S_Encoder(@lf_2s_speed, 15, "on", "off", "off")
+LF_2S_Encoder(@lf_2s_speed, 10, "on", "off", "off")
 LF_2S_Intersection(@lf_2s_speed, "off", "on", "on")
 Arc_Move(161, 2.2, "stanga", -80)
 '' End Transit to 2 custom
@@ -333,7 +333,7 @@ Arc_Move(161, 2.2, "stanga", -80)
 
 '' Luare 2 custom
 @speed_dif_wall = 8
-Move_Sync_Encoder_Wall(12, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
+Move_Sync_Encoder_Wall(15, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
 Lift_Semi_1_Cub_Up()
 Move_Sync_Encoder_Wall(9, @move_sync_speed_luare_cuburi, "right", "on", "on", "on")
 Lift_Semi_1_Cub_Limit()
@@ -369,7 +369,6 @@ Wait(0.5)
 
 
 '' Lasare turn custom
-Move_Sync_Encoder(1, @move_sync_speed, "on", "on", "on")
 Robot_Spin(85, "dreapta", @robot_spin_speed, "on")
 Lift_Down()
 Move_Sync_Encoder(2, @move_sync_speed, "on", "on", "on")
@@ -397,10 +396,10 @@ Lift_Down()
 
 If culoare_cub = "Blue" Then
   Gheara_Close()
-  Move_Sync_Encoder(19, @move_sync_speed, "on", "on", "on")
+  Move_Sync_Encoder(18, @move_sync_speed, "on", "on", "on")
   Wait(0.2)
   Gheara_Open()
-  Move_Sync_Encoder(19, @move_syncback_speed, "on", "off", "off")
+  Move_Sync_Encoder(18, @move_syncback_speed, "on", "off", "off")
 EndIf
 
 
