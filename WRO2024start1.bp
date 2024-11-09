@@ -282,7 +282,7 @@ Wait(0.5)
 
 '' Luare cub 4 custom
 Lift_Semi_2_Cub_Limit()
-Gheara_Semi()
+Gheara_Semi3()
 Lift_Semi_2_Cub_Luare()
 Gheara_Close()
 Lift_Semi_2_Cub_Up()
