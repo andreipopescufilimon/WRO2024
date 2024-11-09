@@ -362,11 +362,52 @@ Lift_Semi()
 Wait(0.5)
 Gheara_Close_No_Wait()
 Robot_Spin(140, "dreapta", @robot_spin_speed, "on")
-Move_Sync_Encoder(58, -100, "off", "off", "off")
+Move_Sync_Encoder(60, -100, "off", "off", "off")
 Arc_Move(37, 0, "stanga", 100)
 Lift_Down_No_Wait()
 Move_Sync_Encoder(80, -100, "off", "off", "off")
 '' End Transit final
+
+
+'' Iesire zid cu alin
+Move_Sync_Wall_To_Color(40, "right", "on", "on", "white")
+Move_Sync_Encoder(5, @move_sync_speed, "on", "on", "on")
+Arc_Move(20, 85, "stanga", -73)
+Arc_Move(113, 5, "stanga", 73)
+
+Gheara_Open()
+Move_Sync_Encoder(10, @move_sync_speed, "on", "on", "on")
+aliniere("forward", @aliniere_speed + 20)
+'' End Iesire zid cu alin
+
+
+'' Debris 1 & 2
+Move_Sync_Encoder(74.5, @move_syncback_speed, "on", "on", "on")
+Gheara_Close_No_Wait()
+Arc_Move(21, 0, "dreapta", -70)
+Lift_Semi()
+Wait(0.5)
+Move_Sync_Encoder(1, @move_syncback_speed, "on", "on", "on")
+Arc_Move(21, 0, "dreapta", 70)
+Move_Sync_Encoder(54, @move_sync_speed, "on", "on", "on")
+'' End Debris 1 & 2
+
+
+'' Apa 1
+Robot_Spin(96.5, "stanga", @robot_spin_speed, "on")
+Move_Sync_Encoder(45, @move_syncback_speed, "on", "on", "on")
+Robot_Spin_Time("dreapta", "on")
+Lift_Apa_Down()
+Wait(0.2)
+Robot_Spin(2, "stanga", @robot_spin_speed, "on")
+Lift_Semi()
+Wait(0.2)
+'' End Apa 1
+
+'' Lasare debris
+Robot_Spin(75, "stanga", @robot_spin_speed, "on")
+Lift_Down()
+'' End Lasare Debris
 
 '************************************************ end program principal
 '************************************************ afisare timp de rulare
