@@ -77,10 +77,10 @@
 
 '************************************ Variabile de tip kp/ki/kd ************************************
 ' kp_lf - valoarea optima de kp pentru algoritmul de line follower
-@kp_lf = 0.6
+@kp_lf = 0.8
 
 ' kd_lf - valoarea optima de kd pentru algoritmul de line follower
-@kd_lf = 3.8
+@kd_lf = 4.2
 
 ' ki_lf - valoarea optima de kd pentru algoritmul de line follower
 @ki_lf = 0
@@ -119,7 +119,7 @@
 @AcceleratedEncoder = 70
 
 ' DeceleratedEncoder - distanta (exprimate in grade de motor) pentru a deccelera de la Vmax la V0(50-150 in general)
-@DeceleratedEncoder = 80
+@DeceleratedEncoder = 85
 
 '******************** Variabile folosite pentru brate, executie in thread ******************
 

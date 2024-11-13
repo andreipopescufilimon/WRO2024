@@ -183,7 +183,7 @@ Function LF_2S_Intersection (in number Vmax, in string acceleration, in string a
     ' final controller PD pentru line follower
     
     'verificam conditia de iesire
-    If s1 < @black Or s2 < @black Then
+    If s1 < @black  + 10 Or s2 < @black + 10 Then
       exit_condition = 0
     EndIf
     
