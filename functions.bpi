@@ -183,7 +183,7 @@ Function LF_2S_Intersection (in number Vmax, in string acceleration, in string a
     ' final controller PD pentru line follower
     
     'verificam conditia de iesire
-    If s1 < @black  + 10 Or s2 < @black + 10 Then
+    If s1 < @black + 3 Or s2 < @black + 3 Then
       exit_condition = 0
     EndIf
     
@@ -191,7 +191,11 @@ Function LF_2S_Intersection (in number Vmax, in string acceleration, in string a
   
   'daca vrem aliniere la centrul de rotatie al robotului, adica ne pregatim de o rotire
   If aliniere_centru_rotatie = "on" Then
-    Move_Sync_Encoder(@wheel_ax_sensor_ax_distance, Vmax, "off", "on", "on")
+    If end_brake = "on" Then
+      Move_Sync_Encoder(@wheel_ax_sensor_ax_distance, Vmax, "off", "on", "on")
+    Else
+      Move_Sync_Encoder(@wheel_ax_sensor_ax_distance, Vmax, "off", "off", "off")
+    EndIf
   EndIf
   
   ' aplicam frana la finalul algoritmului de line follower
@@ -616,6 +620,9 @@ Function Move_Sync_Encoder_Wall (in number encoder_cm, in number Vmax, in string
   ' aplicam frana la finalul algoritmului de move sync
   If end_brake = "on" Then
     Motor.Stop(@stop_string, "True")
+    If side = "dreapta" Or side = "right" Then
+      Arc_Move(2, 0, "dreapta", 90)
+    EndIf
   EndIf
   
 EndFunction

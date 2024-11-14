@@ -36,6 +36,14 @@ Sub Lift_Up
 
 EndSub
 
+
+Sub Lift_Up_No_Wait
+  
+  @DeltaA = 650
+
+EndSub
+
+
 Sub Lift_Semi
   
   @DeltaA = 300
@@ -143,7 +151,7 @@ EndSub
 
 Sub Gheara_Semi
   
-  @DeltaD = 105
+  @DeltaD = 110
   Wait(0.2)
 
 EndSub
