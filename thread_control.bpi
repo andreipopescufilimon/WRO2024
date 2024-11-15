@@ -105,6 +105,13 @@ Sub Lift_Semi_2_Cub_Up
 EndSub
 
 
+Sub Lift_Semi_2_Cub_Up_No_Wait
+  
+  @DeltaA = 600
+
+EndSub
+
+
 Sub Lift_Semi_2_Cub_Limit
   
   @DeltaA = 490
@@ -168,6 +175,13 @@ Sub Gheara_Semi2
   
   @DeltaD = 117
   Wait(0.3)
+
+EndSub
+
+
+Sub Gheara_Semi2_No_Wait
+  
+  @DeltaD = 117
 
 EndSub
 
