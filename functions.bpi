@@ -756,7 +756,7 @@ Function Move_Sync_To_Color(in number Vmax, in string acceleration, in string en
       If @alin_brown = 1 Then
         s1 = Sensor.ReadPercent(1)
         s2 = Sensor.ReadPercent(2)
-        If colour = "brown" And s1 < 50 And s2 < 50 Then
+        If colour = "brown" And s1 < 54 And s2 < 54 Then
           exit_condition = 0
         EndIf
       EndIf
@@ -764,7 +764,7 @@ Function Move_Sync_To_Color(in number Vmax, in string acceleration, in string en
       If @alin_brown = 2 Then
         s1 = Sensor.ReadPercent(1)
         s2 = Sensor.ReadPercent(2)
-        If colour = "brown" And s1 < 50 And s2 < 50 Then
+        If colour = "brown" And s1 < 54 And s2 < 54 Then
           exit_condition = 0
         EndIf
       EndIf  
