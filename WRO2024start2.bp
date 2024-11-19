@@ -24,8 +24,8 @@ Sistem_Init()
 @move_sync_speed_small = 70
 @move_syncback_speed = -95
 @move_syncback_speed_small = -70
-@move_sync_speed_luare_cuburi = 45  
-@move_syncback_speed_luare_cuburi = -45
+@move_sync_speed_luare_cuburi = 50
+@move_syncback_speed_luare_cuburi = -50
 @2s_turn2black_speed = 80
 @robot_spin_speed = 60
 @aliniere_speed = -40
@@ -217,7 +217,7 @@ Move_Sync_Wall_To_Color(50, "left", "off", "on", "brown")
 
 Lift_Semi_2_Cub_Up()
 Gheara_Semi2()
-Move_Sync_Encoder_Wall(19.7, @move_sync_speed_luare_cuburi, "left", "on", "on", "on")
+Move_Sync_Encoder_Wall(20.2, @move_sync_speed_luare_cuburi, "left", "on", "on", "on")
 @speed_dif_wall = 4
 Wait(0.2)
 Lift_Semi_2_Cub_Luare()
@@ -257,11 +257,11 @@ Wait(0.3)
 
 
 '' Apa 2
-Move_Sync_Encoder(7, @move_syncback_speed, "on", "on", "on")
+Move_Sync_Encoder(7.2, @move_syncback_speed, "on", "on", "on")
 Robot_Spin_Time("dreapta", "on")
 Lift_Apa_Down()
 Wait(0.5)
-Robot_Spin(1, "stanga", @robot_spin_speed, "on")
+Robot_Spin(0.5, "stanga", @robot_spin_speed, "on")
 Lift_Semi()
 Wait(0.5)
 Robot_Spin(10, "stanga", @robot_spin_speed - 10, "on")
@@ -368,15 +368,16 @@ Wait(0.2)
 Gheara_Close_No_Wait()
 Robot_Spin(140, "dreapta", @robot_spin_speed, "on")
 Move_Sync_Encoder(64, -100, "off", "off", "off")
-Arc_Move(35, 0, "stanga", 100)
+Arc_Move(34, 0, "stanga", 100)
 Lift_Down_No_Wait()
 Move_Sync_Encoder(75, -100, "off", "off", "off")
 '' End Transit final
 
 
 '' Iesire zid cu alin
-Move_Sync_Wall_To_Color(70, "right", "on", "on", "white")
-Move_Sync_Encoder(6.9, @move_sync_speed, "on", "on", "on")
+Move_Sync_Encoder(5, @move_sync_speed, "on", "off", "off")
+Move_Sync_Wall_To_Color(70, "right", "off", "off", "white")
+Move_Sync_Encoder(6.9, @move_sync_speed, "off", "on", "on")
 Arc_Move(20, 85, "stanga", -73) 
 Arc_Move(113, 5, "stanga", 73)
 
@@ -394,18 +395,19 @@ Lift_Semi()
 Wait(0.5)
 Move_Sync_Encoder(1.5, @move_syncback_speed, "on", "on", "on")
 Arc_Move(22, 0, "dreapta", 70)
-Move_Sync_Encoder(52.8, @move_sync_speed, "on", "on", "on")
+Move_Sync_Encoder(52.85, @move_sync_speed, "on", "on", "on")
 '' End Debris 1 & 2
 
 
 '' Apa 1
 Robot_Spin(95, "stanga", @robot_spin_speed, "on")
-Move_Sync_Encoder(43, @move_syncback_speed, "on", "on", "on")
+Move_Sync_Encoder(43.5, @move_syncback_speed, "on", "on", "on")
 Robot_Spin_Time("dreapta", "on")
 Lift_Apa_Down()
 Wait(0.2)
 Robot_Spin(2, "stanga", @robot_spin_speed, "on")
 Lift_Semi()
+Wait(0.4)
 
 'Robot_Spin_Time("dreapta", "on")
 'Lift_Apa_Down()

@@ -55,7 +55,7 @@ Move_Sync_Encoder(52, @move_sync_speed, "on", "on", "on")
 
 '' Apa 1
 Robot_Spin(96, "stanga", @robot_spin_speed, "on")
-Move_Sync_Encoder(45.4, @move_syncback_speed, "on", "on", "on")
+Move_Sync_Encoder(46, @move_syncback_speed, "on", "on", "on")
 Robot_Spin_Time("dreapta", "on")
 Lift_Apa_Down()
 Wait(0.2)
@@ -362,7 +362,7 @@ Move_Sync_Encoder(1, @move_sync_speed, "off", "on", "on")
 Wait(0.2)
 
 Arc_Move(95, 0, "stanga", 80)
-Move_Sync_Encoder(21, @move_syncback_speed, "on", "on", "on")
+Move_Sync_Encoder(22, @move_syncback_speed, "on", "on", "on")
 Lift_Semi()
 Wait(0.5)
 '' End Iesire zid + luare debris uri
