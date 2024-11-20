@@ -67,6 +67,13 @@ Sub Lift_Semi_1_Cub_Up
 EndSub
 
 
+Sub Lift_Semi_1_Cub_Upper
+  
+  @DeltaA = 385
+  
+EndSub
+
+
 Sub Lift_Semi_1_Cub_Up_No_Wait
   
   @DeltaA = 375
