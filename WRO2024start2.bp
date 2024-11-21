@@ -24,8 +24,8 @@ Sistem_Init()
 @move_sync_speed_small = 70
 @move_syncback_speed = -95
 @move_syncback_speed_small = -70
-@move_sync_speed_luare_cuburi = 50
-@move_syncback_speed_luare_cuburi = -50
+@move_sync_speed_luare_cuburi = 55
+@move_syncback_speed_luare_cuburi = -55
 @2s_turn2black_speed = 80
 @robot_spin_speed = 60
 @aliniere_speed = -40
@@ -378,7 +378,7 @@ Move_Sync_Encoder(75, -100, "off", "off", "off")
 '' Iesire zid cu alin
 Move_Sync_Encoder(5, @move_sync_speed, "on", "off", "off")
 Move_Sync_Wall_To_Color(70, "right", "off", "off", "white")
-Move_Sync_Encoder(7.1, @move_sync_speed, "off", "on", "on")
+Move_Sync_Encoder(6.9, @move_sync_speed, "off", "on", "on")
 Arc_Move(20, 85, "stanga", -73) 
 Arc_Move(113, 5, "stanga", 73)
 

@@ -180,7 +180,7 @@ EndSub
 
 Sub Gheara_Semi2
   
-  @DeltaD = 115
+  @DeltaD = 121
   Wait(0.3)
 
 EndSub
@@ -188,7 +188,7 @@ EndSub
 
 Sub Gheara_Semi2_No_Wait
   
-  @DeltaD = 115
+  @DeltaD = 121
 
 EndSub
 

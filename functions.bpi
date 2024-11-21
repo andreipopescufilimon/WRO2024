@@ -183,7 +183,7 @@ Function LF_2S_Intersection (in number Vmax, in string acceleration, in string a
     ' final controller PD pentru line follower
     
     'verificam conditia de iesire
-    If s1 < @black + 3 Or s2 < @black + 3 Then
+    If s1 < @black + 2 Or s2 < @black + 2 Then
       exit_condition = 0
     EndIf
     
@@ -631,7 +631,7 @@ EndFunction
 '******************************************************* move sync to colour function
 Function Move_Sync_To_Color(in number Vmax, in string acceleration, in string end_brake, in string colour)
   
-  If colour = "white" Or colour = "black" Then
+  If colour = "white" Or colour = "black" Or colour = "green" Then
     Sensor.SetMode(1, 4)
     Sensor.SetMode(2, 4)
   Else
@@ -641,6 +641,7 @@ Function Move_Sync_To_Color(in number Vmax, in string acceleration, in string en
   distback = 0
   ' resetam contoarele motoarelor + resetam senzorii
   outcol = 0
+  val = 0
   red = 0
   green = 0
   blue = 0
@@ -751,12 +752,24 @@ Function Move_Sync_To_Color(in number Vmax, in string acceleration, in string en
         exit_condition = 0
       EndIf
       
+    ElseIf colour = "green" Then
+      
+      Citire_Culoare_HSV(1, val)
+      If val = 3 Or val = 1 Then
+        exit_condition = 0
+      EndIf
+      
+      Citire_Culoare_HSV(2, val)
+      If val = 3 Or val = 1 Then
+        exit_condition = 0
+      EndIf
+      
     Else
       
       If @alin_brown = 1 Then
         s1 = Sensor.ReadPercent(1)
         s2 = Sensor.ReadPercent(2)
-        If colour = "brown" And s1 < 54 And s2 < 54 Then
+        If colour = "brown" And s1 < 56 And s2 < 56 Then
           exit_condition = 0
         EndIf
       EndIf
@@ -764,7 +777,7 @@ Function Move_Sync_To_Color(in number Vmax, in string acceleration, in string en
       If @alin_brown = 2 Then
         s1 = Sensor.ReadPercent(1)
         s2 = Sensor.ReadPercent(2)
-        If colour = "brown" And s1 < 54 And s2 < 54 Then
+        If colour = "brown" And s1 < 56 And s2 < 56 Then
           exit_condition = 0
         EndIf
       EndIf  

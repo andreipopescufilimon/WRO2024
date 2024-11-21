@@ -72,12 +72,12 @@
 @Vcorner = 70
 
 ' Viteza de diferenta intre motoare pentru wall follow
-@speed_dif_wall = 8
+@speed_dif_wall = 5
 
 
 '************************************ Variabile de tip kp/ki/kd ************************************
 ' kp_lf - valoarea optima de kp pentru algoritmul de line follower
-@kp_lf = 0.7
+@kp_lf = 0.8
 
 ' kd_lf - valoarea optima de kd pentru algoritmul de line follower
 @kd_lf = 4.8
@@ -92,7 +92,7 @@
 @kd_1lf = 5.2
 
 ' kp_move_sync - valoarea optima de kp pentru algoritmul de move_sync
-@kp_move_sync = 2.2
+@kp_move_sync = 1.8
 
 ' kd_move_sync - valoarea optima de kd pentru algoritmul de move_sync
 @kd_move_sync = 1
