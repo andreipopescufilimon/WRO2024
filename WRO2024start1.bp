@@ -24,8 +24,8 @@ Sistem_Init()
 @move_sync_speed_small = 70
 @move_syncback_speed = -95
 @move_syncback_speed_small = -70
-@move_sync_speed_luare_cuburi = 50
-@move_syncback_speed_luare_cuburi = -50
+@move_sync_speed_luare_cuburi = 47
+@move_syncback_speed_luare_cuburi = -47
 @2s_turn2black_speed = 80
 @robot_spin_speed = 60
 @aliniere_speed = -40
@@ -198,13 +198,13 @@ Move_Sync_To_Color(@move_sync_speed, "off", "off", "white")
 
 LF_2S_Encoder(@lf_2s_speed, 10, "on", "off", "off")
 LF_2S_Intersection(@lf_2s_speed, "off", "off", "off")
-LF_2S_Encoder(@lf_2s_speed, 15, "off", "off", "off")
-Move_Sync_Encoder(25, @move_sync_speed, "off", "on", "on")
+LF_2S_Encoder(@lf_2s_speed, 13, "off", "off", "off")
+Move_Sync_Encoder(27, @move_sync_speed, "off", "on", "on")
 '' End Iesire cu transit pt luare 2 galbene
 
 
 '' Intrare pe zid
-Arc_Move(168, 1.6, "stanga", -60)
+Arc_Move(166, 1.55, "stanga", -80)
 @alin_brown = 2
 Move_Sync_Wall_To_Color(40, "right", "on", "on", "brown")
 '' End Intrare pe zid
@@ -327,7 +327,7 @@ Move_Sync_To_Color(@move_sync_speed, "off", "off", "white")
 2S_Rotation2Black_Line(70, "dreapta", "on", "on")
 LF_2S_Encoder(@lf_2s_speed, 10, "on", "off", "off")
 LF_2S_Intersection(@lf_2s_speed, "off", "on", "on")
-Arc_Move(161, 2.2, "stanga", -80)
+Arc_Move(163, 2.2, "stanga", -80)
 '' End Transit to 2 custom
 
 
@@ -409,8 +409,8 @@ Lift_Semi()
 Wait(0.3)
 Gheara_Close_No_Wait()
 Robot_Spin(140, "dreapta", @robot_spin_speed, "on")
-Move_Sync_Encoder(53, -100, "off", "off", "off")
-Arc_Move(42, 0, "stanga", 100)
+Move_Sync_Encoder(57, -100, "off", "off", "off")
+Arc_Move(40, 0, "stanga", 100)
 Lift_Down_No_Wait()
 Move_Sync_Encoder(87, -95, "off", "off", "off")
 '' End Transit final
