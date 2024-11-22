@@ -72,7 +72,7 @@
 @Vcorner = 70
 
 ' Viteza de diferenta intre motoare pentru wall follow
-@speed_dif_wall = 5
+@speed_dif_wall = 8
 
 
 '************************************ Variabile de tip kp/ki/kd ************************************
