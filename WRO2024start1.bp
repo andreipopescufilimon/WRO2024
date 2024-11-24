@@ -70,7 +70,7 @@ Lift_Down()
 '' End Lasare Debris
 
 '' Intrare pe zid
-Robot_Spin(66, "dreapta", @robot_spin_speed, "on")
+Robot_Spin(72, "dreapta", @robot_spin_speed, "on")
 Move_Sync_Encoder(27, @move_sync_speed, "on", "on", "on")
 Robot_Spin(89, "stanga", @robot_spin_speed, "on")
 Move_Sync_Encoder(4, @move_syncback_speed, "on", "off", "off")

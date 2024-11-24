@@ -6,7 +6,7 @@ include "thread_control"
 '********************************************* end include
 
 '********************************** Setarea cronometre *****************************************
-Motor.ResetCount(@stop_string) 
+Motor.ResetCount(@stop_string)
 Time.Reset8() ' cronometru care tine timpul de executie al programului. Va fi afisat la final.
 '********************************************* end setare cronometre
 
@@ -24,8 +24,8 @@ Sistem_Init()
 @move_sync_speed_small = 70
 @move_syncback_speed = -95
 @move_syncback_speed_small = -70
-@move_sync_speed_luare_cuburi = 50
-@move_syncback_speed_luare_cuburi = -50
+@move_sync_speed_luare_cuburi = 45
+@move_syncback_speed_luare_cuburi = -45
 @2s_turn2black_speed = 80
 @robot_spin_speed = 60
 @aliniere_speed = -40
@@ -48,7 +48,7 @@ Move_Sync_Encoder(11, @move_sync_speed, "on", "on", "on")
 Arc_Move(95, 0, "stanga", 80)
 
 Gheara_Semi_No_Wait()
-Move_Sync_Encoder_Wall(9, 70, "right", "on", "off", "off")
+Move_Sync_Encoder_Wall(11, 70, "right", "on", "off", "off")
 @alin_brown = 2
 Move_Sync_Wall_To_Color(60, "right", "off", "on", "brown")
 '' End Intrare pe zid 1
@@ -68,10 +68,9 @@ Gheara_Close()
 '' End Luare doua cuburi rosii
 
 
-
 '' Transit pe diagonala
-Arc_Move(25, 35, "stanga", 70)
-Arc_Move(72, 0, "stanga", -70)
+Arc_Move(25, 35, "stanga", 60)
+Arc_Move(72, 0, "stanga", -60)
 
 Move_Sync_Encoder(109, @move_sync_speed, "on", "on", "on")
 
@@ -111,15 +110,15 @@ Gheara_Close()
 
 
 '' Iesire cu arc si lasare turn rosu
-Move_Sync_Encoder(7.9, move_syncback_speed, "on", "on", "on")
+Move_Sync_Encoder(7.8, move_syncback_speed, "on", "on", "on")
 Arc_Move(38, 25, "stanga", 80)
 Arc_Move(127, 0, "stanga", -80)
 
 Move_Sync_Encoder(19.6, @move_sync_speed, "on", "on", "on")
 Wait(0.2)
 Gheara_Semi()
-Move_Sync_Encoder(14.5, @move_syncback_speed, "on", "on", "on")
-Arc_Move(100, 6.6, "stanga", 80)
+Move_Sync_Encoder(14.2, @move_syncback_speed, "on", "on", "on")
+Arc_Move(105, 6.3, "stanga", 80)
 '' End Iesire cu arc si lasare turn rosu
 
 
@@ -146,8 +145,8 @@ Gheara_Close()
 
 '' Iesire cu transit pt luare 2 galbene
 Move_Sync_Encoder(12, @move_sync_speed, "on", "on", "on")
-Arc_Move(25, 40, "stanga", 70)
-Arc_Move(114, 0, "stanga", -70)
+Arc_Move(25, 40, "stanga", 50)
+Arc_Move(114, 0, "stanga", -50)
 
 
 Move_Sync_Encoder(49 , @move_sync_speed, "on", "off", "off")
@@ -160,7 +159,7 @@ Move_Sync_Encoder(20, @move_sync_speed, "off", "on", "on")
 
 
 '' Intrare pe zid
-Arc_Move(167, 2, "stanga", -60)
+Arc_Move(169, 1.9, "stanga", -60)
 @alin_brown = 2
 Move_Sync_Wall_To_Color(40, "right", "on", "on", "brown")
 '' End Intrare pe zid
@@ -213,11 +212,11 @@ Arc_Move(43, 50, "dreapta", 80)
 @speed_dif_wall = 15
 Move_Sync_Encoder_Wall(15, 90, "left", "on", "off", "off")
 @alin_brown = 2
-Move_Sync_Wall_To_Color(50, "left", "off", "on", "brown")
+Move_Sync_Wall_To_Color(70, "left", "off", "on", "brown")
 
 Lift_Semi_2_Cub_Up()
 Gheara_Semi2()
-Move_Sync_Encoder_Wall(20.2, @move_sync_speed_luare_cuburi, "left", "on", "on", "on")
+Move_Sync_Encoder_Wall(19.85, @move_sync_speed_luare_cuburi, "left", "on", "on", "on")
 @speed_dif_wall = 4
 Wait(0.2)
 Lift_Semi_2_Cub_Luare()
@@ -228,12 +227,12 @@ Lift_Semi_2_Cub_Up()
 
 '' Transit to cub 4 custom
 Arc_Move(44, 0, "dreapta", -60)
-Move_Sync_Encoder(6.3, @move_syncback_speed_small, "on", "on", "on")
-Arc_Move(44, 0, "stanga", 70)
+Move_Sync_Encoder(6.2, @move_syncback_speed_small, "on", "on", "on")
+Arc_Move(43, 0, "stanga", 70)
 '' End Transit to cub 4 custom
 
 
-Move_Sync_Encoder(16, @move_sync_speed_small, "on", "on", "on")
+Move_Sync_Encoder(16, @move_sync_speed_small - 25, "on", "on", "on")
 Wait(0.5)
 
 
@@ -249,7 +248,7 @@ Lift_Semi_2_Cub_Up()
 '' Luare Debris
 Move_Sync_Encoder(8.6, @move_syncback_speed, "on", "on", "on")
 Lift_Down_No_Wait()
-Arc_Move(195, 3.9, "dreapta", -60)
+Arc_Move(197, 4, "dreapta", -60)
 Move_Sync_Encoder(9, @move_syncback_speed, "on", "on", "on")
 Lift_Semi()
 Wait(0.3)
@@ -257,11 +256,11 @@ Wait(0.3)
 
 
 '' Apa 2
-Move_Sync_Encoder(7.2, @move_syncback_speed, "on", "on", "on")
+Move_Sync_Encoder(8, @move_syncback_speed, "on", "on", "on")
 Robot_Spin_Time("dreapta", "on")
 Lift_Apa_Down()
 Wait(0.5)
-Robot_Spin(0.5, "stanga", @robot_spin_speed, "on")
+Robot_Spin(1, "stanga", @robot_spin_speed, "on")
 Lift_Semi()
 Wait(0.5)
 Robot_Spin(10, "stanga", @robot_spin_speed - 10, "on")
@@ -281,8 +280,8 @@ Arc_Move(105 - 100, 10, "dreapta", 80)
 Move_Sync_Encoder(21.5, @move_syncback_speed_small, "on", "off", "off")
 
 Move_Sync_Wall_To_Color(70, "right", "off", "off", "white")
-Move_Sync_Encoder(14.7, @move_sync_speed_small, "off", "on", "on")
-Arc_Move(86, 0, "stanga", -90)
+Move_Sync_Encoder(14.8, @move_sync_speed_small, "off", "on", "on")
+Arc_Move(85, 0.1, "stanga", -90)
 @alin_brown = 2
 Move_Sync_Wall_To_Color(90, "right", "on", "off", "brown")
 Lift_Semi_1_Cub_Up_No_Wait()
@@ -290,8 +289,8 @@ Lift_Semi_1_Cub_Up_No_Wait()
 
 
 '' Luare custom finala
-Move_Sync_Encoder_Wall(37, @move_sync_speed, "right", "off", "off", "off")
-Move_Sync_Encoder_Wall(10, @move_sync_speed_luare_cuburi, "right", "off", "on", "on")
+Move_Sync_Encoder_Wall(30, @move_sync_speed, "right", "off", "off", "off")
+Move_Sync_Encoder_Wall(17, @move_sync_speed_luare_cuburi, "right", "off", "on", "on")
 Lift_Semi_1_Cub_Limit() 
 Gheara_Semi()
 Lift_Down()
@@ -323,9 +322,9 @@ LF_2S_Intersection(@lf_2s_speed_small, "off", "off", "on")
 '' Transit to luare debris si lasare turn custom
 Arc_Move(55, 15, "stanga", 80)
 Lift_Semi_No_Wait()
-Move_Sync_Encoder(36, @move_syncback_speed, "on", "on", "on")
+Move_Sync_Encoder(36.2, @move_syncback_speed, "on", "on", "on")
 Wait(0.2)
-Arc_Move(50, 0, "dreapta", -90)
+Arc_Move(51, 0, "dreapta", -90)
 Move_Sync_Encoder(4.7, @move_sync_speed, "on", "on", "on")
 Lift_Down()
 Gheara_Open()
@@ -335,8 +334,7 @@ Gheara_Open()
 '' Citire
 Lift_Semi_1_Cub_Limit()
 Gheara_Close()
-Lift_Semi_1_Cub_Upper()
-Wait(0.2)
+Lift_Semi_1_Cub_Up()
 Move_Sync_Encoder(4, @move_syncback_speed_small, "on", "on", "on")
 Arc_Move(40, 0, "dreapta", 80)
 'Wait(0.2)
@@ -354,34 +352,35 @@ Lift_Down()
 
 If culoare_cub = "Blue" Then
   Gheara_Close()
-  Move_Sync_Encoder(18.5, @move_sync_speed, "on", "on", "on")
+  Move_Sync_Encoder(19, @move_sync_speed, "on", "on", "on")
   Wait(0.3)
   Gheara_Open()
   Wait(0.1)
-  Move_Sync_Encoder(18.5, @move_syncback_speed, "on", "off", "off")
-  Robot_Spin(8, "dreapta", @robot_spin_speed, "on")
+  Robot_Spin(2, "dreapta", @robot_spin_speed, "on")
+  Move_Sync_Encoder(19, @move_syncback_speed, "on", "off", "off")
 EndIf
 
 
 '' Transit final
+Robot_Spin(4, "dreapta", @robot_spin_speed, "on")
 Move_Sync_Encoder(10, @move_syncback_speed_small, "on", "on", "on")
 Lift_Semi()
 Wait(0.2)
 Gheara_Close_No_Wait()
 If culoare_cub = "Blue" Then
-  Robot_Spin(140 - 8, "dreapta", @robot_spin_speed, "on")
+  Robot_Spin(140 - 6, "dreapta", @robot_spin_speed, "on")
 Else
-  Robot_Spin(140, "dreapta", @robot_spin_speed, "on")  
-EndIf  
-Move_Sync_Encoder(63, -100, "off", "off", "off")
-Arc_Move(35, 0, "stanga", 100)
+  Robot_Spin(140, "dreapta", @robot_spin_speed, "on")
+EndIf
+Move_Sync_Encoder(64, -100, "off", "off", "off")
+Arc_Move(34, 0, "stanga", 100)
 Lift_Down_No_Wait()
 Move_Sync_Encoder(75, -100, "off", "off", "off")
 '' End Transit final
 
 
 '' Iesire zid cu alin
-Move_Sync_Encoder(10, @move_sync_speed, "on", "off", "off")
+Move_Sync_Encoder(5, @move_sync_speed, "on", "off", "off")
 Move_Sync_Wall_To_Color(70, "right", "off", "off", "white")
 Move_Sync_Encoder(6.9, @move_sync_speed, "off", "on", "on")
 Arc_Move(20, 85, "stanga", -73) 
@@ -401,13 +400,13 @@ Lift_Semi()
 Wait(0.5)
 Move_Sync_Encoder(1.5, @move_syncback_speed, "on", "on", "on")
 Arc_Move(22, 0, "dreapta", 70)
-Move_Sync_Encoder(51.85, @move_sync_speed, "on", "on", "on")
+Move_Sync_Encoder(48, @move_sync_speed, "on", "on", "on")
 '' End Debris 1 & 2
 
 
 '' Apa 1
-Robot_Spin(95, "stanga", @robot_spin_speed, "on")
-Move_Sync_Encoder(43.3, @move_syncback_speed, "on", "on", "on")
+Robot_Spin(96, "stanga", @robot_spin_speed, "on")
+Move_Sync_Encoder(43.8, @move_syncback_speed, "on", "on", "on")
 Robot_Spin_Time("dreapta", "on")
 Lift_Apa_Down()
 Wait(0.2)

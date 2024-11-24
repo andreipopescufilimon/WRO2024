@@ -56,7 +56,7 @@
 
 ' grey - valoarea intersectiei de culoare alb-negru
 @grey = 30
-@greyt = 30
+@greyt = 40
 @greycitire1s = 30
 
 
@@ -72,7 +72,7 @@
 @Vcorner = 70
 
 ' Viteza de diferenta intre motoare pentru wall follow
-@speed_dif_wall = 8
+@speed_dif_wall = 10
 
 
 '************************************ Variabile de tip kp/ki/kd ************************************
@@ -116,10 +116,10 @@
 @timer_ki_rotation2black = 125
 
 ' AcceleratedEncoder - distanta (exprimate in grade de motor) pentru a accelera de la V0 la Vmax(50-150 in general)
-@AcceleratedEncoder = 65 ' 70
+@AcceleratedEncoder = 75 ' 70
 
 ' DeceleratedEncoder - distanta (exprimate in grade de motor) pentru a deccelera de la Vmax la V0(50-150 in general)
-@DeceleratedEncoder = 80  ' 85
+@DeceleratedEncoder = 90  ' 85
 
 '******************** Variabile folosite pentru brate, executie in thread ******************
 
