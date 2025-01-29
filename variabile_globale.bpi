@@ -1,178 +1,178 @@
- '********************************************** Variabile globale ***********************************************
+'********************************************** Global Variables ***********************************************
 '''''''''''''''''''''''''''''
-' variabile determinate pe plansa pe care se executa misiunea
-' dependente de conditiile externe: constructia robotului, lumina, culorile de pe plansa,
-'                                   calitatea materialului plansei
-' se vor ajusta la inceput, in perioada de testare
+' Variables determined by the board on which the mission is executed
+' Dependent on external conditions: robot construction, lighting, colors on the board,
+'                                   material quality of the board
+' These will be adjusted at the beginning, during the testing phase
 '''''''''''''''''''''''''''''
-@teamname = "WRO2024 ~ NERDVANA TAURUS" '"WRO2024 ~ NERDVANA TAURUS"
+@teamname = "WRO2023-2024 ~ NERDVANA TAURUS" '"WRO2023-2024 ~ NERDVANA TAURUS"
 
-'********************************* Variabile dependente de constructia robotului ********************************
+'********************************* Variables dependent on robot construction ********************************
 
-' Tip string, cu valori "large" / "medium"
+' String type, with values "large" / "medium"
 @motor_type = "medium"
 
-' left_motor - portul motorului stanga folosit pentru navigare (A/B/C/D).
+' left_motor - port of the left motor used for navigation (A/B/C/D).
 @left_motor = "B"
 
-' right_motor - portul motorului dreapta folosit pentru navigare (A/B/C/D).
+' right_motor - port of the right motor used for navigation (A/B/C/D).
 @right_motor = "C"
 
-' stop_string - concatenam stringuri pentru porturile motoarelor. Necesar pentru functii precum Motor.GetCount sau
+' stop_string - concatenates strings for motor ports. Necessary for functions such as Motor.GetCount or
 '               Motor.Stop.
 @stop_string = Text.Append(@left_motor, @right_motor)
 
-' wheel_diameter - diametrul cauciului (exprimat in cm). Se regaseste pe lateralul cauciucului folosit
+' wheel_diameter - tire diameter (expressed in cm). Found on the side of the tire used.
 @wheel_diameter = 6.24
 
-' wheel_distance - distanta (exprimata in cm) dintre cele doua roti.
-'  se masoara de la exteriorul unei roti pana la interiorul rotii paralele
+' wheel_distance - distance (expressed in cm) between the two wheels.
+' Measured from the outer side of one wheel to the inner side of the parallel wheel.
 @wheel_distance = 17.8
 
-' wheel_ax_sensor_ax_distance - distanta (exprimata in cm) de la axul rotilor pana la mijlocul senzorilor
+' wheel_ax_sensor_ax_distance - distance (expressed in cm) from the wheel axle to the center of the sensors.
 @wheel_ax_sensor_ax_distance = 8.2
 
 
-'********************************* Variabile folosite la algoritimi ********************************
+'********************************* Variables used in algorithms ********************************
 
-' line follower - 
-' cu 2 senzori:
-' left_sensor - portul senzorului stanga folosit pentru line follower
+' Line follower - 
+' With 2 sensors:
+' left_sensor - port of the left sensor used for line following.
 @left_sensor = 1
 
-' right_sensor - portul senzorului dreapta folosit pentru line follower
+' right_sensor - port of the right sensor used for line following.
 @right_sensor = 2
 
-' cu 1 senzor:
+' With 1 sensor:
 @lf_sensor = 1
 
 
-'********************************* Valorile culorilor de pe plansa *********************************
-' black - valoarea culorii negre de pe plansa
+'********************************* Color values on the board *********************************
+' black - value of the black color on the board.
 @black = 12
 
-' white - valoarea culorii albe de pe plansa
+' white - value of the white color on the board.
 @white = 80
 
-' grey - valoarea intersectiei de culoare alb-negru
+' grey - value of the intersection of black and white colors.
 @grey = 30
 @greyt = 40
 @greycitire1s = 30
 
 
-'************************************** Variabile viteza - nav *************************************
-' V0 - viteza de start a oricarui algoritm de line follower / move sync
+'************************************** Speed Variables - Navigation *************************************
+' V0 - starting speed for any line following / move sync algorithm.
 @V0 = 40
 @V0_decel = 20
 
-' Vmax - viteza la care trebuie sa ajunga maxim algoritmul de line follower / move sync
+' Vmax - maximum speed the line follower / move sync algorithm should reach.
 @Vmax = 95
 
-' Vcorner - viteza la care robotul face virajele
+' Vcorner - speed at which the robot makes turns.
 @Vcorner = 70
 
-' Viteza de diferenta intre motoare pentru wall follow
+' Speed difference between motors for wall following.
 @speed_dif_wall = 10
 
 
-'************************************ Variabile de tip kp/ki/kd ************************************
-' kp_lf - valoarea optima de kp pentru algoritmul de line follower
+'************************************ PID control variables (kp/ki/kd) ************************************
+' kp_lf - optimal kp value for the line follower algorithm.
 @kp_lf = 0.8
 
-' kd_lf - valoarea optima de kd pentru algoritmul de line follower
+' kd_lf - optimal kd value for the line follower algorithm.
 @kd_lf = 4.8
 
-' ki_lf - valoarea optima de kd pentru algoritmul de line follower
+' ki_lf - optimal ki value for the line follower algorithm.
 @ki_lf = 0
 
-' kp_lf - valoarea optima de kp pentru algoritmul de line follower
+' kp_lf - optimal kp value for the one-sensor line follower algorithm.
 @kp_1lf = 1.4
 
-' kd_lf - valoarea optima de kd pentru algoritmul de line follower
+' kd_lf - optimal kd value for the one-sensor line follower algorithm.
 @kd_1lf = 5.2
 
-' kp_move_sync - valoarea optima de kp pentru algoritmul de move_sync
+' kp_move_sync - optimal kp value for the move_sync algorithm.
 @kp_move_sync = 1.8
 
-' kd_move_sync - valoarea optima de kd pentru algoritmul de move_sync
+' kd_move_sync - optimal kd value for the move_sync algorithm.
 @kd_move_sync = 1
 
-' kp_move_sync - valoarea optima de kp pentru algoritmul de move_sync
+' kp_move_sync - optimal kp value for the move_sync algorithm in turns.
 @kp_move_sync_vir = 2.9
 @kd_move_sync_vir = 1
 @ki_move_sync_vir = 0.001
 
-' urmatoarele variabile sunt incluse direct in functia Rotation2Black_Line
-' kp_rotation2black - valoarea optima de kp pentru algoritmul de rotire cu oprirea senzorilor la linia neagra
+' The following variables are included directly in the Rotation2Black_Line function.
+' kp_rotation2black - optimal kp value for the rotation algorithm that stops sensors at the black line.
 @kp_rotation2black = 0.7
 
-' kd_rotation2black - valoarea optima de kd pentru algoritmul de rotire cu oprirea senzorilor la linia neagra
+' kd_rotation2black - optimal kd value for the rotation algorithm that stops sensors at the black line.
 @kd_rotation2black = 2.5
 
-' ki_rotation2black - valoarea optima de ki pentru algoritmul de rotire cu oprirea senzorilor la linia neagra
+' ki_rotation2black - optimal ki value for the rotation algorithm that stops sensors at the black line.
 @ki_rotation2black = 0.01
 
-'timer_ki_rotation2black - timp de functionare al algoritmului PID din functia Rotation2Black_Line; valoare in ms
+'timer_ki_rotation2black - runtime for the PID algorithm in the Rotation2Black_Line function; value in ms.
 @timer_ki_rotation2black = 125
 
-' AcceleratedEncoder - distanta (exprimate in grade de motor) pentru a accelera de la V0 la Vmax(50-150 in general)
+' AcceleratedEncoder - distance (expressed in motor degrees) to accelerate from V0 to Vmax (typically 50-150).
 @AcceleratedEncoder = 75 ' 70
 
-' DeceleratedEncoder - distanta (exprimate in grade de motor) pentru a deccelera de la Vmax la V0(50-150 in general)
+' DeceleratedEncoder - distance (expressed in motor degrees) to decelerate from Vmax to V0 (typically 50-150).
 @DeceleratedEncoder = 90  ' 85
 
-'******************** Variabile folosite pentru brate, executie in thread ******************
+'******************** Variables used for arms, execution in thread ******************
 
-' coeficienti gheara
+' Claw coefficients.
 @kpClaw = 7.5
 @kdClaw = 6
 
-'' coeficienti lift
+'' Lift coefficients.
 @kpLift = 3
 @kdLift = 17.5
 @kdLift_copy = @kdLift
 
-' diferenta de unghi. Intotdeauna pornim de la 0
+' Angle difference. Always starts from 0.
 @deltaA = 0
 @deltaD = 0
 
 
 '''''''''''''''''''''''''''''
-''''' Constante globale '''''
+''''' Global Constants '''''
 '''''''''''''''''''''''''''''
-' durata maxima de executie a probei
-@max_execution_time = 120 'exprimat in secunde
-@aliniere_time = 1300 ' durata maxima de executie pentru alinieri
-@alinierep_time = 1200 ' durata maxima de executie pentru alinierip
+' Maximum execution time for the task.
+@max_execution_time = 120 'expressed in seconds.
+@aliniere_time = 1300 ' maximum execution time for alignments.
+@alinierep_time = 1200 ' maximum execution time for alignment adjustments.
 @TimerRobotSpin = 500
 
-@debug = "off" ' debug 
-@fastmode = "on" ' fast
+@debug = "off" ' Debug mode.
+@fastmode = "on" ' Fast mode.
 @debrie_done = "off"
 @show_live_time = "off"
 
-' cat timp are nevoie sa faca citirea de culoare pentru a se asigura ca este corecta citirea
-@timp_citire_culoare = 0.3 'exprimat in secunde
+' Time required for color reading to ensure correct reading.
+@timp_citire_culoare = 0.3 'expressed in seconds.
 
 
-'******************************** Variabile distanta plansa zid(alb) *******************************
-' se aduna la distantele dinainte de aliniere
-' se calculeaza dupa pozitia de start a robotului (back/front/left/right)
+'******************************** Distance variables for board wall (white) *******************************
+' Added to distances before alignment.
+' Calculated after the robot's starting position (back/front/left/right).
 @left_side = 0.0
 @right_side = 0.0
 @front_side = 0.0
 @back_side = 0.0
 
-'********************************* Variabile folosite pentru culori ********************************
+'********************************* Variables used for colors ********************************
 
 
-' valorile citite pe alb (valorile maxime)
+' Values read on white (maximum values).
 @max_R = 340
 @max_G = 320
 @max_B = 292
 
 
-'************************************ Variabile viteza deplasare ***********************************
+'************************************ Speed Variables for movement ***********************************
 @lf_2s_speed = 90
 @lf_2s_speed_small = 80
 @lf_1s_speed = 80
@@ -191,9 +191,9 @@
 @Vcorner_slow = 40
 
 
-'****************************************** Alte variabile *****************************************
+'****************************************** Other Variables *****************************************
 
-'' Culori
+'' Colors.
 @r_val_white = 236
 @g_val_white = 230
 @b_val_white = 180
@@ -209,16 +209,16 @@
 '@r_val_yellow =
 '@g_val_yellow =
 '@b_val_yellow =
-'' End Culori
+'' End Colors.
 
-'' Citire
+'' Reading.
 @cnt_citiri = 0
 @cntB = 0  ' 0
 @cntG = 0  ' 1
 @col = 0
 
 
-'' Poz citiri
+'' Reading positions.
 @p1 = "NONE"
 @p2 = "NONE"
 @p3 = "NONE"
@@ -226,17 +226,15 @@
 @p5 = "NONE"
 @p6 = "NONE"
 @check_citire_separare = 0
-@stacare_cuburi_5_6 = 0 ' 0 daca da, 1 daca face cazuri
+@stacare_cuburi_5_6 = 0 ' 0 if yes, 1 if case handling.
 
-'' Culori turnuri de 2 inainte de construirea finala
+'' Colors of towers of 2 before final construction.
 @b_tower = "NONE"
 @m_tower = "NONE"
 @f_tower = "NONE"
 
-
 @cubB = 0
 @cubG = 0
-
 
 @start_poz = 1
 @stop_sound = 0
