@@ -1,10 +1,9 @@
 '**********************************************************************************************
-' Urmatoarele subprograme se adreseaza bratului (lfit + gheara)
-' valorile delta sunt grade de motor
+' The following subprograms address the arm (lift + claw)
+' Delta values are motor degrees
 '***********************************************************************************************
 
-
-Sub Sistem_Init
+Sub System_Init
   
   @DeltaA = -5
   @DeltaD = -10
@@ -59,7 +58,7 @@ Sub Lift_Semi_No_Wait
 EndSub
 
 
-Sub Lift_Semi_1_Cub_Up
+Sub Lift_Semi_1_Cube_Up
   
   @DeltaA = 375
   Wait(0.3)
@@ -67,21 +66,21 @@ Sub Lift_Semi_1_Cub_Up
 EndSub
 
 
-Sub Lift_Semi_1_Cub_Upper
+Sub Lift_Semi_1_Cube_Upper
   
   @DeltaA = 385
   
 EndSub
 
 
-Sub Lift_Semi_1_Cub_Up_No_Wait
+Sub Lift_Semi_1_Cube_Up_No_Wait
   
   @DeltaA = 375
 
 EndSub
 
 
-Sub Lift_Semi_1_Cub_Limit
+Sub Lift_Semi_1_Cube_Limit
   
   @DeltaA = 300
   Wait(0.3)
@@ -89,14 +88,14 @@ Sub Lift_Semi_1_Cub_Limit
 EndSub
 
 
-Sub Lift_Semi_1_Cub_Limit_No_Wait
+Sub Lift_Semi_1_Cube_Limit_No_Wait
   
   @DeltaA = 300
 
 EndSub
 
 
-Sub Lift_Semi_sus
+Sub Lift_Semi_High
   
   @DeltaA = 260
   Wait(0.5)
@@ -104,7 +103,7 @@ Sub Lift_Semi_sus
 EndSub
 
 
-Sub Lift_Semi_2_Cub_Up
+Sub Lift_Semi_2_Cube_Up
   
   @DeltaA = 600
   Wait(0.4)
@@ -112,21 +111,21 @@ Sub Lift_Semi_2_Cub_Up
 EndSub
 
 
-Sub Lift_Semi_2_Cub_Up_No_Wait
+Sub Lift_Semi_2_Cube_Up_No_Wait
   
   @DeltaA = 600
 
 EndSub
 
 
-Sub Lift_Semi_2_Cub_Limit
+Sub Lift_Semi_2_Cube_Limit
   
   @DeltaA = 490
   Wait(0.4)
 
 EndSub
 
-Sub Lift_Semi_2_Cub_Luare
+Sub Lift_Semi_2_Cube_Pickup
   
   @DeltaA = 225
   Wait(0.4)
@@ -134,10 +133,7 @@ Sub Lift_Semi_2_Cub_Luare
 EndSub
 
 
-
-
-
-Sub Lift_Apa_Down
+Sub Lift_Water_Down
   
   @DeltaA = -20
   'Wait(0.3)
@@ -145,10 +141,9 @@ Sub Lift_Apa_Down
 EndSub
 
 
+'*********************** THREAD CLAW **************************
 
-'*********************** THREAD GHEARA **************************
-
-Sub Gheara_Close
+Sub Claw_Close
   
   @DeltaD = 300
   Wait(0.3)
@@ -156,14 +151,14 @@ Sub Gheara_Close
 EndSub
 
 
-Sub Gheara_Close_No_Wait
+Sub Claw_Close_No_Wait
   
   @DeltaD = 300
 
 EndSub
 
 
-Sub Gheara_Semi
+Sub Claw_Semi
   
   @DeltaD = 110
   Wait(0.2)
@@ -171,14 +166,14 @@ Sub Gheara_Semi
 EndSub
 
 
-Sub Gheara_Semi_No_Wait
+Sub Claw_Semi_No_Wait
   
   @DeltaD = 100
 
 EndSub
 
 
-Sub Gheara_Semi2
+Sub Claw_Semi2
   
   @DeltaD = 120.5
   Wait(0.3)
@@ -186,14 +181,14 @@ Sub Gheara_Semi2
 EndSub
 
 
-Sub Gheara_Semi2_No_Wait
+Sub Claw_Semi2_No_Wait
   
   @DeltaD = 120.5
 
 EndSub
 
 
-Sub Gheara_Semi3
+Sub Claw_Semi3
   
   @DeltaD = 105
   Wait(0.3)
@@ -201,7 +196,7 @@ Sub Gheara_Semi3
 EndSub
 
 
-Sub Gheara_Open
+Sub Claw_Open
   
   @DeltaD = 0
   Wait(0.3)
@@ -210,55 +205,53 @@ EndSub
 
 
 
-
-
-'' resetam vectorul de frecventa de culoare
-'Sub Reset_Frecventa_Culoare 
+'' Reset the color frequency vector
+'Sub Reset_Color_Frequency 
   'For i = 0 to 7
-    '@frecventa[i] = 0
+    '@frequency[i] = 0
   'EndFor
 'EndSub
 
-'' resetam vectorul de frecventa de culoare
-'Function Adaugare_Frecventa_Culoare  (in number color)
-  '@frecventa[color] = @frecventa[color] + 1
+'' Add to the color frequency vector
+'Function Add_Color_Frequency (in number color)
+  '@frequency[color] = @frequency[color] + 1
 'EndFunction
 
-'' salvam culoarea citita. Cautam in vectorul de frecventa si pastram 
-'' cea mai intalnita culoare dintre citirile efectuate
-'Function Salvare_Culoare (out number color)
-  'max_value = @frecventa[0]
+'' Save the detected color. Look in the frequency vector and keep 
+'' the most frequently detected color among the readings taken
+'Function Save_Color (out number color)
+  'max_value = @frequency[0]
   'color = 0
   
   'For i = 1 to 7
-    'If max_value < @frecventa[i] Then
-      'max_value = @frecventa[i]
+    'If max_value < @frequency[i] Then
+      'max_value = @frequency[i]
       'color = i
     'EndIf
   'EndFor
 
 'EndFunction
 
-' functie de citire a culorii cubului. Citim o perioada de timp si introducem 
-' in vectorul de frecventa. Apoi, salvam cea mai intalnita culoare intr-o variabila
-'Function Citire_Cub (out number color)
-  'Reset_Frecventa_Culoare()
+' Function to read the cube's color. Reads for a set time, adds to the frequency vector,
+' then saves the most frequently detected color into a variable
+'Function Read_Cube (out number color)
+  'Reset_Color_Frequency()
   'Time.Reset1()
-  'While Time.Get1() < @timp_citire_culoare
-    'Citire_Culoare (4, "cub", color)
-    'Adaugare_Frecventa_Culoare(color)
+  'While Time.Get1() < @color_read_time
+    'Read_Color (4, "cube", color)
+    'Add_Color_Frequency(color)
   'EndWhile
-  'Salvare_Culoare(cub) 
+  'Save_Color(cube) 
 'EndFunction
 
-' functie de citire a culorii chenarului. Citim o perioada de timp si introducem 
-' in vectorul de frecventa. Apoi, salvam cea mai intalnita culoare intr-o variabila
-'Function Citire_Chenar (out number color)
-  'Reset_Frecventa_Culoare()
+' Function to read the border color. Reads for a set time, adds to the frequency vector,
+' then saves the most frequently detected color into a variable
+'Function Read_Border (out number color)
+  'Reset_Color_Frequency()
   'Time.Reset1()
-  'While Time.Get1() < @timp_citire_culoare
-    'Citire_Culoare (3, "chenar", color)
-    'Adaugare_Frecventa_Culoare(color)
+  'While Time.Get1() < @color_read_time
+    'Read_Color (3, "border", color)
+    'Add_Color_Frequency(color)
   'EndWhile
-  'Salvare_Culoare(chenar) 
+  'Save_Color(border) 
 'EndFunction
